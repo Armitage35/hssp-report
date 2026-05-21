@@ -1,0 +1,888 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>SSP &amp; Curate Report – May 21, 2026</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%2318181b'/%3E%3Crect x='7' y='20' width='7' height='8' rx='2' fill='%2322c55e'/%3E%3Crect x='18' y='10' width='7' height='18' rx='2' fill='%2322c55e'/%3E%3C/svg%3E">
+<style>
+:root {
+  --bg:#f1f5f9;--surface:#ffffff;--surface-sub:#fafbfc;
+  --border:#f0f2f5;--border-card:#e2e8f0;
+  --text-primary:#0f172a;--text-muted:#94a3b8;--text-faint:#cbd5e1;
+  --link:#2563eb;--pill-bg:#e2e8f0;--pill-fg:#475569;
+  --tag-bg:#f1f5f9;--tag-fg:#64748b;--hover:#f8fafc;
+  --done-bg:#dcfce7;--done-fg:#166534;
+  --uat-bg:#d1fae5;--uat-fg:#065f46;
+  --staging-bg:#dbeafe;--staging-fg:#1e40af;
+  --review-bg:#fef3c7;--review-fg:#92400e;
+  --high-bg:#fee2e2;--high-fg:#991b1b;
+  --low-bg:#f1f5f9;--low-fg:#64748b;
+  --default-bg:#f1f5f9;--default-fg:#64748b;
+  --accent-blue:#2563eb;--accent-green:#059669;
+  --accent-amber:#d97706;--accent-purple:#7c3aed;
+  --stat-blue:#2563eb;--stat-red:#dc2626;--stat-green:#059669;
+  --track-bg:#e2e8f0;
+  --sidebar-bg:#ffffff;--sidebar-border:#e2e8f0;
+  --card-bg:#1e293b;--card-border:#334155;--card-text:#f1f5f9;--card-muted:#94a3b8;
+}
+@media(prefers-color-scheme:dark){
+  :root{
+    --bg:#0f172a;--surface:#1e293b;--surface-sub:#162032;
+    --border:#1e293b;--border-card:#334155;
+    --text-primary:#f1f5f9;--text-muted:#64748b;--text-faint:#475569;
+    --link:#60a5fa;--pill-bg:#334155;--pill-fg:#94a3b8;
+    --tag-bg:#1e293b;--tag-fg:#64748b;--hover:#263348;
+    --done-bg:#14532d;--done-fg:#86efac;
+    --uat-bg:#064e3b;--uat-fg:#6ee7b7;
+    --staging-bg:#1e3a8a;--staging-fg:#93c5fd;
+    --review-bg:#451a03;--review-fg:#fcd34d;
+    --high-bg:#450a0a;--high-fg:#fca5a5;
+    --low-bg:#1e293b;--low-fg:#64748b;
+    --default-bg:#1e293b;--default-fg:#64748b;
+    --accent-blue:#60a5fa;--accent-green:#34d399;
+    --accent-amber:#fbbf24;--accent-purple:#a78bfa;
+    --stat-blue:#60a5fa;--stat-red:#f87171;--stat-green:#34d399;
+    --track-bg:#334155;
+    --sidebar-bg:#1a2942;--sidebar-border:#334155;
+    --card-bg:#0f1f35;--card-border:#1e3a5c;--card-text:#e2e8f0;--card-muted:#64748b;
+  }
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:var(--bg);color:var(--text-primary);padding:20px 24px;max-width:1160px;margin:0 auto;-webkit-font-smoothing:antialiased}
+.page-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:20px;gap:12px;flex-wrap:wrap}
+.eyebrow{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:1px;color:var(--text-muted);margin-bottom:5px}
+h1{font-size:22px;font-weight:800;color:var(--text-primary)}
+.subtitle{font-size:12px;color:var(--text-muted);margin-top:4px}
+.header-right{display:flex;flex-direction:column;align-items:flex-end;gap:8px}
+.board-btn{font-size:12px;color:var(--link);padding:7px 14px;border:1.5px solid var(--border-card);border-radius:8px;background:var(--surface);font-weight:600;cursor:pointer;white-space:nowrap;text-decoration:none;display:inline-block}
+.board-btn:hover{border-color:var(--link)}
+.info-btn{width:28px;height:28px;border-radius:50%;border:1.5px solid var(--border-card);background:var(--surface);color:var(--text-muted);font-size:13px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .15s}
+.info-btn:hover{border-color:var(--link);color:var(--link);background:var(--hover)}
+.info-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.82);z-index:9999;align-items:center;justify-content:center;backdrop-filter:blur(3px)}
+.info-overlay.open{display:flex}
+.info-modal{background:#1c1c1f;border:1px solid #333;border-radius:16px;padding:0;max-width:560px;width:calc(100% - 32px);max-height:86vh;overflow-y:auto;position:relative;box-shadow:0 24px 60px rgba(0,0,0,.7);scrollbar-width:thin;scrollbar-color:#3f3f46 transparent}
+.info-modal::-webkit-scrollbar{width:5px}
+.info-modal::-webkit-scrollbar-track{background:transparent}
+.info-modal::-webkit-scrollbar-thumb{background:#3f3f46;border-radius:99px}
+.info-modal::-webkit-scrollbar-thumb:hover{background:#52525b}
+.info-modal-head{padding:22px 24px 16px;border-bottom:1px solid #2a2a2e;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;background:#1c1c1f;z-index:1;border-radius:16px 16px 0 0}
+.info-modal-head h3{font-size:15px;font-weight:700;color:#fff;margin:0}
+.info-modal-body{padding:20px 24px 24px}
+.info-row{display:flex;gap:12px;margin-bottom:18px}
+.info-row:last-child{margin-bottom:0}
+.info-icon{font-size:18px;flex-shrink:0;width:24px;text-align:center;margin-top:1px}
+.info-row-content h4{font-size:12px;font-weight:700;color:#fff;margin-bottom:4px;letter-spacing:.2px}
+.info-row-content p{font-size:12.5px;color:#a1a1aa;line-height:1.65;margin:0}
+.info-divider{border:none;border-top:1px solid #2a2a2e;margin:16px 0}
+.info-note{background:#27272a;border-radius:8px;padding:10px 14px;font-size:12px;color:#a1a1aa;line-height:1.6;margin-top:4px}
+.info-note strong{color:#e4e4e7}
+.info-modal .close-btn{background:none;border:none;font-size:16px;cursor:pointer;color:#71717a;line-height:1;padding:4px;border-radius:6px;transition:.15s}
+.info-modal .close-btn:hover{color:#fff;background:#333}
+.time-toggle{display:flex;gap:2px;background:var(--surface);border:1.5px solid var(--border-card);border-radius:8px;padding:3px;}
+.tr-btn{font-size:11px;font-weight:600;padding:4px 10px;border-radius:5px;cursor:pointer;border:none;background:transparent;color:var(--text-muted);transition:all 0.15s}
+.tr-btn:hover{background:var(--hover);color:var(--text-primary)}
+.tr-btn.active{background:var(--link);color:#fff}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:20px}
+.stat-card{background:var(--surface);border-radius:10px;padding:14px 18px;box-shadow:0 1px 3px rgba(0,0,0,0.06);border-left:4px solid;transition:all 0.2s}
+.stat-card.blue{border-color:var(--stat-blue)}.stat-card.red{border-color:var(--stat-red)}.stat-card.green{border-color:var(--stat-green)}
+.stat-value{font-size:28px;font-weight:800;line-height:1;margin-bottom:4px;transition:all 0.2s}
+.stat-card.blue .stat-value{color:var(--stat-blue)}.stat-card.red .stat-value{color:var(--stat-red)}.stat-card.green .stat-value{color:var(--stat-green)}
+.stat-label{font-size:10px;color:var(--text-muted);font-weight:600;text-transform:uppercase;letter-spacing:.5px}
+.layout{display:grid;grid-template-columns:2fr 1fr;gap:20px;align-items:start}
+@media(max-width:720px){.layout{grid-template-columns:1fr}}
+.sidebar{position:sticky;top:20px}
+.sidebar-card{background:var(--sidebar-bg);border:1.5px solid var(--sidebar-border);border-radius:12px;overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,0.07)}
+.sidebar-header{padding:12px 16px;border-bottom:1px solid var(--border-card);background:var(--surface-sub);display:flex;align-items:center;gap:8px;border-top:3px solid var(--accent-purple)}
+.sidebar-title{font-size:13px;font-weight:700;color:var(--text-primary);flex:1}
+.sidebar-count{background:var(--pill-bg);color:var(--pill-fg);border-radius:20px;padding:2px 8px;font-size:11px;font-weight:600}
+.epic-item{padding:12px 14px;border-bottom:1px solid var(--border)}
+.epic-item:last-child{border-bottom:none}
+.ei-top{display:flex;align-items:flex-start;justify-content:space-between;gap:6px;margin-bottom:5px}
+.ei-left{display:flex;flex-direction:column;gap:3px;flex:1;min-width:0}
+.ei-key-row{display:flex;align-items:center;gap:5px}
+.ei-key{font-size:11px;font-weight:700;color:var(--link);text-decoration:none}
+.ei-key:hover{text-decoration:underline}
+.ei-name{font-size:12px;font-weight:500;color:var(--text-primary);line-height:1.35}
+.ei-pct{font-size:17px;font-weight:800;flex-shrink:0;line-height:1;padding-top:1px}
+.ei-bar-track{height:6px;background:var(--track-bg);border-radius:4px;overflow:hidden;margin-bottom:5px}
+.ei-bar-fill{height:100%;border-radius:4px}
+.ei-footer{display:flex;justify-content:space-between;align-items:center}
+.ei-dates{font-size:10px;color:var(--text-muted)}
+.ei-frac{font-size:10px;color:var(--text-faint)}
+.section{background:var(--surface);border-radius:10px;box-shadow:0 1px 3px rgba(0,0,0,0.06);margin-bottom:16px;overflow:hidden;border-top:3px solid}
+.section.blue{border-color:var(--accent-blue)}.section.green{border-color:var(--accent-green)}.section.amber{border-color:var(--accent-amber)}
+.section-header{padding:11px 16px;border-bottom:1px solid var(--border-card);display:flex;align-items:center;gap:7px;background:var(--surface-sub)}
+.section-icon{font-size:15px}
+.section-title{font-size:13px;font-weight:700;color:var(--text-primary);flex:1}
+.section-sub{font-size:11px;color:var(--text-muted);font-weight:400;margin-left:4px}
+.count-pill{background:var(--pill-bg);color:var(--pill-fg);border-radius:20px;padding:2px 9px;font-size:11px;font-weight:600}
+.empty{padding:24px 16px;text-align:center;color:var(--text-muted);font-size:12px}
+.issue-row{display:flex;align-items:flex-start;padding:9px 16px;border-bottom:1px solid var(--border);gap:8px;cursor:pointer;transition:background 0.1s;position:relative}
+.issue-row:hover{background:var(--hover)}
+.issue-row:last-child{border-bottom:none}
+.issue-left{display:flex;align-items:center;gap:5px;min-width:104px;padding-top:2px;flex-shrink:0}
+.issue-key{font-size:11px;font-weight:600;color:var(--link);text-decoration:none}
+.issue-key:hover{text-decoration:underline}
+.issue-body{flex:1;min-width:0}
+.issue-summary{font-size:12px;font-weight:500;color:var(--text-primary);margin-bottom:3px;line-height:1.4}
+.issue-meta{display:flex;align-items:center;gap:4px;flex-wrap:wrap}
+.badge-status{padding:1px 6px;border-radius:3px;font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.2px}
+.badge-done{background:var(--done-bg);color:var(--done-fg)}
+.badge-uat{background:var(--uat-bg);color:var(--uat-fg)}
+.badge-staging{background:var(--staging-bg);color:var(--staging-fg)}
+.badge-review{background:var(--review-bg);color:var(--review-fg)}
+.badge-default{background:var(--default-bg);color:var(--default-fg)}
+.badge-high{padding:1px 5px;border-radius:3px;font-size:10px;font-weight:600;background:var(--high-bg);color:var(--high-fg)}
+.badge-low{padding:1px 5px;border-radius:3px;font-size:10px;font-weight:500;background:var(--low-bg);color:var(--low-fg)}
+.tag{background:var(--tag-bg);color:var(--tag-fg);border-radius:3px;padding:1px 5px;font-size:10px}
+.assignee{font-size:10px;color:var(--text-muted)}
+#hover-card{
+  position:fixed;z-index:10001;width:320px;
+  background:var(--card-bg);border:1px solid var(--card-border);
+  border-radius:12px;box-shadow:0 8px 32px rgba(0,0,0,0.4);
+  padding:0;pointer-events:none;opacity:0;transition:opacity 0.12s;
+  font-size:13px;overflow:hidden;
+}
+#hover-card.visible{opacity:1;pointer-events:auto}
+.hc-top{padding:14px 14px 10px}
+.hc-key-row{display:flex;align-items:center;gap:7px;margin-bottom:8px}
+.hc-key{font-size:12px;font-weight:700;color:#60a5fa;text-decoration:none}
+.hc-key:hover{text-decoration:underline}
+.hc-summary{font-size:13px;font-weight:600;color:var(--card-text);line-height:1.4;margin-bottom:10px}
+.hc-meta{display:flex;align-items:center;gap:8px;margin-bottom:10px;flex-wrap:wrap}
+.hc-avatar{width:22px;height:22px;border-radius:50%;background:#334155;flex-shrink:0;object-fit:cover}
+.hc-avatar-placeholder{width:22px;height:22px;border-radius:50%;background:#3b82f6;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:white;flex-shrink:0}
+.hc-assignee{font-size:11px;color:var(--card-muted)}
+.hc-desc{font-size:11px;color:#94a3b8;line-height:1.5;padding:10px 14px;border-top:1px solid var(--card-border)}
+.hc-actions{display:flex;gap:6px;padding:10px 14px;border-top:1px solid var(--card-border);background:rgba(0,0,0,0.15)}
+.hc-btn{font-size:11px;font-weight:600;padding:5px 10px;border-radius:6px;cursor:pointer;border:none;display:flex;align-items:center;gap:5px;}
+.hc-btn-primary{background:#2563eb;color:#fff}
+.hc-btn-primary:hover{background:#1d4ed8}
+.hc-btn-secondary{background:rgba(255,255,255,0.07);color:#94a3b8;border:1px solid var(--card-border)}
+.hc-btn-secondary:hover{background:rgba(255,255,255,0.12);color:#f1f5f9}
+.section-footer{padding:8px 16px;border-top:1px solid var(--border-card);text-align:right;background:var(--surface-sub)}
+.section-footer a{font-size:11px;color:var(--text-muted);text-decoration:none;font-weight:500}
+.section-footer a:hover{color:var(--link);text-decoration:underline}
+.footer{text-align:center;font-size:11px;color:var(--text-faint);margin-top:12px;padding-bottom:4px}
+.footer a{color:var(--link);text-decoration:none}
+.footer a:hover{text-decoration:underline}
+.epic-filter-row{display:flex;gap:4px;padding:8px 14px;border-bottom:1px solid var(--border);flex-wrap:wrap}
+.ef-btn{font-size:10px;font-weight:600;padding:2px 9px;border-radius:99px;cursor:pointer;border:1.5px solid var(--border-card);background:transparent;color:var(--text-muted);transition:all .15s;line-height:1.6}
+.ef-btn:hover{border-color:var(--accent-purple);color:var(--accent-purple)}
+.ef-btn.ef-active{background:var(--accent-purple);border-color:var(--accent-purple);color:#fff}
+.gf-btn{font-size:10px;font-weight:600;padding:2px 9px;border-radius:99px;cursor:pointer;border:1.5px solid #3f3f46;background:transparent;color:#71717a;transition:all .15s;line-height:1.6}
+.gf-btn:hover{border-color:#a78bfa;color:#a78bfa}
+.gf-btn.gf-active{background:#7c3aed;border-color:#7c3aed;color:#fff}
+</style>
+</head>
+<body>
+
+<div id="hover-card">
+  <div class="hc-top">
+    <div class="hc-key-row">
+      <span id="hc-icon"></span>
+      <a id="hc-key" class="hc-key" href="#" target="_blank"></a>
+    </div>
+    <div id="hc-summary" class="hc-summary"></div>
+    <div class="hc-meta">
+      <span id="hc-status"></span>
+      <span id="hc-avatar-wrap"></span>
+      <span id="hc-assignee" class="hc-assignee"></span>
+    </div>
+  </div>
+  <div id="hc-desc" class="hc-desc"></div>
+  <div class="hc-actions">
+    <button class="hc-btn hc-btn-primary" id="hc-open">
+      <svg width="11" height="11" viewBox="0 0 11 11" fill="none"><path d="M1 5.5h9M6 1.5l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      Open in Jira
+    </button>
+    <button class="hc-btn hc-btn-secondary" id="hc-copy">
+      <svg width="11" height="11" viewBox="0 0 11 11" fill="none"><rect x="1" y="3" width="7" height="7" rx="1.5" stroke="currentColor" stroke-width="1.3"/><path d="M3 3V2a1 1 0 011-1h5a1 1 0 011 1v5a1 1 0 01-1 1H8" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+      Copy Link
+    </button>
+  </div>
+</div>
+
+<div class="page-header">
+  <div>
+    <div class="eyebrow">SSP &amp; Curate · Perion</div>
+    <h1>🚀 SSP &amp; Curate Report</h1>
+    <div class="subtitle">21 May, 2026</div>
+  </div>
+  <div class="header-right">
+    <div style="display:flex;gap:8px;align-items:center">
+      <button class="info-btn" onclick="document.getElementById('info-overlay').classList.add('open')" title="How this report works">?</button>
+      <a href="https://perion.atlassian.net/jira/software/c/projects/HSSP/boards/380?assignee=5d6fd099522f790d9c77292f" target="_blank" rel="noopener noreferrer" class="board-btn"
+         onclick="window.open(this.href,'_blank');return false;">
+        Open Board ↗
+      </a>
+    </div>
+  </div>
+</div>
+
+<div class="info-overlay" id="info-overlay" onclick="if(event.target===this)this.classList.remove('open')">
+  <div class="info-modal">
+    <div class="info-modal-head">
+      <h3>How This Report Works</h3>
+      <button class="close-btn" onclick="document.getElementById('info-overlay').classList.remove('open')">✕</button>
+    </div>
+    <div class="info-modal-body">
+      <div class="info-row">
+        <div class="info-icon">✏️</div>
+        <div class="info-row-content">
+          <h4>Ticket Titles &amp; Descriptions</h4>
+          <p>Jira ticket summaries are sometimes rewritten here for clarity — making them more readable for a non-technical audience. The original wording is always one click away in Jira.</p>
+        </div>
+      </div>
+      <div class="info-row">
+        <div class="info-icon">⚙️</div>
+        <div class="info-row-content">
+          <h4>Filtering</h4>
+          <p>Infrastructure tickets from Go migration epics (hs-openrtb → hs-apiary) are kept out of the Shipped/UAT sections to stay focused on product features. They appear in the Epic Progress sidebar instead.</p>
+        </div>
+      </div>
+      <div class="info-row">
+        <div class="info-icon">🔍</div>
+        <div class="info-row-content">
+          <h4>Hover Previews</h4>
+          <p>Hover any ticket row to see the full description. Click anywhere on the row to open it in Jira.</p>
+        </div>
+      </div>
+      <div class="info-row">
+        <div class="info-icon">🔄</div>
+        <div class="info-row-content">
+          <h4>Auto-Refresh</h4>
+          <p>Data is re-queried from Jira and this file is regenerated automatically each weekday at 8 AM.</p>
+        </div>
+      </div>
+      <hr class="info-divider">
+      <div class="info-row">
+        <div class="info-icon">🧪</div>
+        <div class="info-row-content">
+          <h4>Coming Next Week — In UAT</h4>
+          <p>Issues currently in QA validation, ready to ship to production. These should land next week barring blockers.</p>
+        </div>
+      </div>
+      <div class="info-row">
+        <div class="info-icon">🔭</div>
+        <div class="info-row-content">
+          <h4>On the Horizon — In Staging &amp; Review</h4>
+          <p>Larger stories being tested in staging or under code review. Not yet in UAT, but approaching completion.</p>
+        </div>
+      </div>
+      <div class="info-row">
+        <div class="info-icon">🚀</div>
+        <div class="info-row-content">
+          <h4>Shipped — Recently Done</h4>
+          <p>Issues moved to Done within the selected window. Toggle between last 10 days, 2 weeks, month, or quarter. The <em>View filter in Jira ↗</em> link updates with the toggle.</p>
+        </div>
+      </div>
+      <div class="info-row">
+        <div class="info-icon">📊</div>
+        <div class="info-row-content">
+          <h4>Epic Progress</h4>
+          <p>Active epics with a completion bar (issues done / total). Use the <strong style="color:#a78bfa">All / SSP / Marketplace / Curate</strong> filter chips to focus on a specific product area. Hover any epic for a full description. <em>Recently Wrapped Up</em> shows epics fully closed in the last ~4 weeks.</p>
+        </div>
+      </div>
+      <div class="info-row" style="margin-bottom:0">
+        <div class="info-icon">📅</div>
+        <div class="info-row-content">
+          <h4>Epic Timeline (Gantt)</h4>
+          <p>Click the <strong style="color:#a78bfa">📅 Timeline</strong> button in the Epic Progress header to open a Gantt chart. Each bar spans the epic's planned start → due date, filled proportionally to completion. The dashed line marks today. Hover any row for the full epic card.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="info-overlay" id="gantt-overlay" onclick="if(event.target===this)this.classList.remove('open')">
+  <div class="info-modal" style="max-width:1100px;width:calc(100% - 32px)">
+    <div class="info-modal-head">
+      <h3>Epic Timeline</h3>
+      <div style="display:flex;align-items:center;gap:6px">
+        <div style="display:flex;gap:3px">
+          <button class="gf-btn gf-active" onclick="setGanttFilter(this,'')">All</button>
+          <button class="gf-btn" onclick="setGanttFilter(this,'SSP')">SSP</button>
+          <button class="gf-btn" onclick="setGanttFilter(this,'Marketplace')">Marketplace</button>
+          <button class="gf-btn" onclick="setGanttFilter(this,'Curate')">Curate</button>
+        </div>
+        <button class="close-btn" onclick="document.getElementById('gantt-overlay').classList.remove('open')">✕</button>
+      </div>
+    </div>
+    <div class="info-modal-body" style="padding:16px 20px 24px;overflow-x:auto">
+      <svg id="gantt-svg" xmlns="http://www.w3.org/2000/svg" style="width:100%;display:block;overflow:visible;min-width:760px"></svg>
+    </div>
+  </div>
+</div>
+
+<!-- Issue / Epic detail modal -->
+<div class="info-overlay" id="detail-overlay" onclick="if(event.target===this)closeDetailModal()">
+  <div class="info-modal" style="max-width:620px;width:calc(100% - 32px)">
+    <div class="info-modal-head">
+      <div style="display:flex;align-items:center;gap:8px;flex:1;min-width:0">
+        <span id="dm-icon" style="flex-shrink:0"></span>
+        <a id="dm-key" class="hc-key" href="#" target="_blank" style="font-size:13px;font-weight:700;color:#60a5fa" onclick="event.stopPropagation()"></a>
+        <span id="dm-badges" style="display:flex;gap:4px;flex-wrap:wrap"></span>
+      </div>
+      <button class="close-btn" onclick="closeDetailModal()">✕</button>
+    </div>
+    <div class="info-modal-body" style="padding:18px 22px">
+      <div id="dm-summary" style="font-size:15px;font-weight:700;color:#f1f5f9;line-height:1.4;margin-bottom:14px"></div>
+      <div id="dm-meta" style="display:flex;align-items:center;gap:8px;margin-bottom:14px;flex-wrap:wrap"></div>
+      <div id="dm-progress" style="margin-bottom:14px"></div>
+      <div id="dm-desc" style="font-size:12.5px;color:#94a3b8;line-height:1.7;white-space:pre-wrap"></div>
+    </div>
+    <div style="display:flex;gap:8px;padding:12px 22px 18px;border-top:1px solid #2a2a2e">
+      <button class="hc-btn hc-btn-primary" id="dm-open">
+        <svg width="11" height="11" viewBox="0 0 11 11" fill="none"><path d="M1 5.5h9M6 1.5l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        Open in Jira
+      </button>
+      <button class="hc-btn hc-btn-secondary" id="dm-copy">
+        <svg width="11" height="11" viewBox="0 0 11 11" fill="none"><rect x="1" y="3" width="7" height="7" rx="1.5" stroke="currentColor" stroke-width="1.3"/><path d="M3 3V2a1 1 0 011-1h5a1 1 0 011 1v5a1 1 0 01-1 1H8" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+        Copy Link
+      </button>
+    </div>
+  </div>
+</div>
+
+<div class="stats">
+  <div class="stat-card blue"><div class="stat-value" id="stat-stories">8</div><div class="stat-label">Features Shipped</div></div>
+  <div class="stat-card red"><div class="stat-value" id="stat-bugs">1</div><div class="stat-label">Bugs Fixed</div></div>
+  <div class="stat-card green"><div class="stat-value" id="stat-uat">7</div><div class="stat-label">Finishing UAT</div></div>
+</div>
+
+<div class="layout">
+  <div class="main-col">
+    <div class="section blue">
+      <div class="section-header" style="flex-wrap:wrap;gap:6px">
+        <span class="section-icon">✅</span>
+        <h2 class="section-title" style="flex:1;min-width:120px">
+          <span id="shipped-heading">Shipped Last 10 Days</span>
+          <span class="section-sub" id="shipped-sub">— Moved to Done (Last 10 Days)</span>
+        </h2>
+        <span class="count-pill" id="shipped-count">9</span>
+        <div class="time-toggle">
+          <button class="tr-btn active" data-range="weekly"    onclick="setRange(this)">Weekly</button>
+          <button class="tr-btn"        data-range="biweekly"  onclick="setRange(this)">Bi-weekly</button>
+          <button class="tr-btn"        data-range="monthly"   onclick="setRange(this)">Monthly</button>
+          <button class="tr-btn"        data-range="quarterly" onclick="setRange(this)">Quarterly</button>
+        </div>
+      </div>
+      <div id="shipped-wrap"><div class="issue-row" data-key="HSSP-4194" onmouseenter="showCard(event,'HSSP-4194')" onmouseleave="hideCard()" onclick="openIssueModal('HSSP-4194')"><div class="issue-left"><svg width="13" height="13" viewBox="0 0 13 13" style="flex-shrink:0;margin-top:2px"><rect width="13" height="13" rx="2" fill="#22c55e"/></svg><a href="https://perion.atlassian.net/browse/HSSP-4194" target="_blank" class="issue-key" onclick="event.stopPropagation()" onmouseenter="event.stopPropagation()">HSSP-4194</a></div><div class="issue-body"><div class="issue-summary">Curators Can Create &amp; Edit Marketplace Rules</div><div class="issue-meta"><span class="badge-status badge-done">Done</span></div></div></div><div class="issue-row" data-key="HSSP-4196" onmouseenter="showCard(event,'HSSP-4196')" onmouseleave="hideCard()" onclick="openIssueModal('HSSP-4196')"><div class="issue-left"><svg width="13" height="13" viewBox="0 0 13 13" style="flex-shrink:0;margin-top:2px"><rect width="13" height="13" rx="2" fill="#22c55e"/></svg><a href="https://perion.atlassian.net/browse/HSSP-4196" target="_blank" class="issue-key" onclick="event.stopPropagation()" onmouseenter="event.stopPropagation()">HSSP-4196</a></div><div class="issue-body"><div class="issue-summary">Curators Get a Marketplace Rules Dashboard</div><div class="issue-meta"><span class="badge-status badge-done">Done</span></div></div></div><div class="issue-row" data-key="HSSP-4195" onmouseenter="showCard(event,'HSSP-4195')" onmouseleave="hideCard()" onclick="openIssueModal('HSSP-4195')"><div class="issue-left"><svg width="13" height="13" viewBox="0 0 13 13" style="flex-shrink:0;margin-top:2px"><rect width="13" height="13" rx="2" fill="#22c55e"/></svg><a href="https://perion.atlassian.net/browse/HSSP-4195" target="_blank" class="issue-key" onclick="event.stopPropagation()" onmouseenter="event.stopPropagation()">HSSP-4195</a></div><div class="issue-body"><div class="issue-summary">Marketplace Rules Appear on Deal Targeting Map</div><div class="issue-meta"><span class="badge-status badge-done">Done</span></div></div></div><div class="issue-row" data-key="HSSP-4422" onmouseenter="showCard(event,'HSSP-4422')" onmouseleave="hideCard()" onclick="openIssueModal('HSSP-4422')"><div class="issue-left"><svg width="13" height="13" viewBox="0 0 13 13" style="flex-shrink:0;margin-top:2px"><rect width="13" height="13" rx="2" fill="#3b82f6"/></svg><a href="https://perion.atlassian.net/browse/HSSP-4422" target="_blank" class="issue-key" onclick="event.stopPropagation()" onmouseenter="event.stopPropagation()">HSSP-4422</a></div><div class="issue-body"><div class="issue-summary">Remove Appcelerate DSP Integration</div><div class="issue-meta"><span class="badge-status badge-done">Done</span></div></div></div><div class="issue-row" data-key="HSSP-4008" onmouseenter="showCard(event,'HSSP-4008')" onmouseleave="hideCard()" onclick="openIssueModal('HSSP-4008')"><div class="issue-left"><svg width="13" height="13" viewBox="0 0 13 13" style="flex-shrink:0;margin-top:2px"><rect width="13" height="13" rx="2" fill="#22c55e"/></svg><a href="https://perion.atlassian.net/browse/HSSP-4008" target="_blank" class="issue-key" onclick="event.stopPropagation()" onmouseenter="event.stopPropagation()">HSSP-4008</a></div><div class="issue-body"><div class="issue-summary">Deal API: Core Endpoints for Deal Creation</div><div class="issue-meta"><span class="badge-status badge-done">Done</span></div></div></div><div class="issue-row" data-key="HSSP-4425" onmouseenter="showCard(event,'HSSP-4425')" onmouseleave="hideCard()" onclick="openIssueModal('HSSP-4425')"><div class="issue-left"><svg width="13" height="13" viewBox="0 0 13 13" style="flex-shrink:0;margin-top:2px"><rect width="13" height="13" rx="2" fill="#3b82f6"/></svg><a href="https://perion.atlassian.net/browse/HSSP-4425" target="_blank" class="issue-key" onclick="event.stopPropagation()" onmouseenter="event.stopPropagation()">HSSP-4425</a></div><div class="issue-body"><div class="issue-summary">Pacing CD: Switch On the Pacing Curve Generator</div><div class="issue-meta"><span class="badge-status badge-done">Done</span></div></div></div><div class="issue-row" data-key="HSSP-4444" onmouseenter="showCard(event,'HSSP-4444')" onmouseleave="hideCard()" onclick="openIssueModal('HSSP-4444')"><div class="issue-left"><svg width="13" height="13" viewBox="0 0 13 13" style="flex-shrink:0;margin-top:2px"><rect width="13" height="13" rx="2" fill="#3b82f6"/></svg><a href="https://perion.atlassian.net/browse/HSSP-4444" target="_blank" class="issue-key" onclick="event.stopPropagation()" onmouseenter="event.stopPropagation()">HSSP-4444</a></div><div class="issue-body"><div class="issue-summary">TTD PG Deals: Raise Bid Rate to 95%</div><div class="issue-meta"><span class="badge-status badge-done">Done</span><span class="badge-high">High</span></div></div></div><div class="issue-row" data-key="HSSP-4446" onmouseenter="showCard(event,'HSSP-4446')" onmouseleave="hideCard()" onclick="openIssueModal('HSSP-4446')"><div class="issue-left"><svg width="13" height="13" viewBox="0 0 13 13" style="flex-shrink:0;margin-top:2px"><rect width="13" height="13" rx="2" fill="#3b82f6"/></svg><a href="https://perion.atlassian.net/browse/HSSP-4446" target="_blank" class="issue-key" onclick="event.stopPropagation()" onmouseenter="event.stopPropagation()">HSSP-4446</a></div><div class="issue-body"><div class="issue-summary">TTD PG Deals: Backfill Existing Deals to 95% Bid Rate</div><div class="issue-meta"><span class="badge-status badge-done">Done</span></div></div></div><div class="issue-row" data-key="HSSP-4437" onmouseenter="showCard(event,'HSSP-4437')" onmouseleave="hideCard()" onclick="openIssueModal('HSSP-4437')"><div class="issue-left"><svg width="13" height="13" viewBox="0 0 13 13" style="flex-shrink:0;margin-top:2px"><circle cx="6.5" cy="6.5" r="6.5" fill="#ef4444"/></svg><a href="https://perion.atlassian.net/browse/HSSP-4437" target="_blank" class="issue-key" onclick="event.stopPropagation()" onmouseenter="event.stopPropagation()">HSSP-4437</a></div><div class="issue-body"><div class="issue-summary">Fix: Budget Min/Max Missing from Curated Deal API</div><div class="issue-meta"><span class="badge-status badge-done">Done</span></div></div></div></div>
+      <div class="section-footer">
+        <a id="shipped-jira-link" href="https://perion.atlassian.net/issues?jql=project%20%3D%20HSSP%20AND%20status%20changed%20to%20Done%20during%20%28%22-10d%22%2C%20now%28%29%29%20AND%20issuetype%20not%20in%20%28%22Chore%22%2C%22Sub-task%22%2C%22Epic%22%2C%22Spike%22%29%20AND%20%22Epic%20Link%22%20not%20in%20%28HSSP-3096%2CHSSP-3606%2CHSSP-871%2CHSSP-3860%29%20ORDER%20BY%20updated%20DESC" target="_blank" rel="noopener noreferrer"
+           onclick="window.open(this.href,'_blank');return false;">View filter in Jira ↗</a>
+      </div>
+    </div>
+    <div class="section green"><div class="section-header"><span class="section-icon">🧪</span><h2 class="section-title">Coming Next Week<span class="section-sub">— In UAT Now</span></h2><span class="count-pill">7</span></div><div class="issue-row" data-key="HSSP-4190" onmouseenter="showCard(event,'HSSP-4190')" onmouseleave="hideCard()" onclick="openIssueModal('HSSP-4190')"><div class="issue-left"><svg width="13" height="13" viewBox="0 0 13 13" style="flex-shrink:0;margin-top:2px"><rect width="13" height="13" rx="2" fill="#22c55e"/></svg><a href="https://perion.atlassian.net/browse/HSSP-4190" target="_blank" class="issue-key" onclick="event.stopPropagation()" onmouseenter="event.stopPropagation()">HSSP-4190</a></div><div class="issue-body"><div class="issue-summary">Trade Desk Deal Sync: Troubleshooting Tools in Admin Console</div><div class="issue-meta"><span class="badge-status badge-uat">In UAT</span><span class="badge-high">High</span></div></div></div><div class="issue-row" data-key="HSSP-4178" onmouseenter="showCard(event,'HSSP-4178')" onmouseleave="hideCard()" onclick="openIssueModal('HSSP-4178')"><div class="issue-left"><svg width="13" height="13" viewBox="0 0 13 13" style="flex-shrink:0;margin-top:2px"><rect width="13" height="13" rx="2" fill="#22c55e"/></svg><a href="https://perion.atlassian.net/browse/HSSP-4178" target="_blank" class="issue-key" onclick="event.stopPropagation()" onmouseenter="event.stopPropagation()">HSSP-4178</a></div><div class="issue-body"><div class="issue-summary">Apiary/Platform Facade for External Exchange Settings</div><div class="issue-meta"><span class="badge-status badge-uat">In UAT</span></div></div></div><div class="issue-row" data-key="HSSP-4308" onmouseenter="showCard(event,'HSSP-4308')" onmouseleave="hideCard()" onclick="openIssueModal('HSSP-4308')"><div class="issue-left"><svg width="13" height="13" viewBox="0 0 13 13" style="flex-shrink:0;margin-top:2px"><rect width="13" height="13" rx="2" fill="#22c55e"/></svg><a href="https://perion.atlassian.net/browse/HSSP-4308" target="_blank" class="issue-key" onclick="event.stopPropagation()" onmouseenter="event.stopPropagation()">HSSP-4308</a></div><div class="issue-body"><div class="issue-summary">Buyer Inventory Packs Controlled via Org Setting</div><div class="issue-meta"><span class="badge-status badge-uat">In UAT</span></div></div></div><div class="issue-row" data-key="HSSP-1549" onmouseenter="showCard(event,'HSSP-1549')" onmouseleave="hideCard()" onclick="openIssueModal('HSSP-1549')"><div class="issue-left"><svg width="13" height="13" viewBox="0 0 13 13" style="flex-shrink:0;margin-top:2px"><rect width="13" height="13" rx="2" fill="#3b82f6"/></svg><a href="https://perion.atlassian.net/browse/HSSP-1549" target="_blank" class="issue-key" onclick="event.stopPropagation()" onmouseenter="event.stopPropagation()">HSSP-1549</a></div><div class="issue-body"><div class="issue-summary">Curated Deals Now Filterable in Analytics Reports</div><div class="issue-meta"><span class="badge-status badge-uat">In UAT</span></div></div></div><div class="issue-row" data-key="HSSP-3680" onmouseenter="showCard(event,'HSSP-3680')" onmouseleave="hideCard()" onclick="openIssueModal('HSSP-3680')"><div class="issue-left"><svg width="13" height="13" viewBox="0 0 13 13" style="flex-shrink:0;margin-top:2px"><circle cx="6.5" cy="6.5" r="6.5" fill="#ef4444"/></svg><a href="https://perion.atlassian.net/browse/HSSP-3680" target="_blank" class="issue-key" onclick="event.stopPropagation()" onmouseenter="event.stopPropagation()">HSSP-3680</a></div><div class="issue-body"><div class="issue-summary">Fix: Publisher Deal Charts Display Correctly</div><div class="issue-meta"><span class="badge-status badge-uat">In UAT</span></div></div></div><div class="issue-row" data-key="HSSP-4299" onmouseenter="showCard(event,'HSSP-4299')" onmouseleave="hideCard()" onclick="openIssueModal('HSSP-4299')"><div class="issue-left"><svg width="13" height="13" viewBox="0 0 13 13" style="flex-shrink:0;margin-top:2px"><circle cx="6.5" cy="6.5" r="6.5" fill="#ef4444"/></svg><a href="https://perion.atlassian.net/browse/HSSP-4299" target="_blank" class="issue-key" onclick="event.stopPropagation()" onmouseenter="event.stopPropagation()">HSSP-4299</a></div><div class="issue-body"><div class="issue-summary">Fix: Curate Orgs Respect Default Country Setting</div><div class="issue-meta"><span class="badge-status badge-uat">In UAT</span></div></div></div><div class="issue-row" data-key="HSSP-4456" onmouseenter="showCard(event,'HSSP-4456')" onmouseleave="hideCard()" onclick="openIssueModal('HSSP-4456')"><div class="issue-left"><svg width="13" height="13" viewBox="0 0 13 13" style="flex-shrink:0;margin-top:2px"><circle cx="6.5" cy="6.5" r="6.5" fill="#ef4444"/></svg><a href="https://perion.atlassian.net/browse/HSSP-4456" target="_blank" class="issue-key" onclick="event.stopPropagation()" onmouseenter="event.stopPropagation()">HSSP-4456</a></div><div class="issue-body"><div class="issue-summary">Auction Maps Openings Using Wrong Deal ID (eSSP → eCDN)</div><div class="issue-meta"><span class="badge-status badge-uat">In UAT</span></div></div></div><div class="section-footer"><a href="https://perion.atlassian.net/issues?jql=project%20%3D%20HSSP%20AND%20status%20%3D%20%22In%20UAT%22%20AND%20issuetype%20not%20in%20%28%22Chore%22%2C%22Sub-task%22%2C%22Epic%22%2C%22Spike%22%29%20ORDER%20BY%20updated%20DESC" target="_blank" rel="noopener noreferrer" onclick="window.open(this.href,'_blank');return false;">View filter in Jira ↗</a></div></div>
+    <div class="section amber"><div class="section-header"><span class="section-icon">🔭</span><h2 class="section-title">On the Horizon<span class="section-sub">— Big Stories in Staging & Review</span></h2><span class="count-pill">20</span></div><div class="issue-row" data-key="HSSP-4373" onmouseenter="showCard(event,'HSSP-4373')" onmouseleave="hideCard()" onclick="openIssueModal('HSSP-4373')"><div class="issue-left"><svg width="13" height="13" viewBox="0 0 13 13" style="flex-shrink:0;margin-top:2px"><rect width="13" height="13" rx="2" fill="#22c55e"/></svg><a href="https://perion.atlassian.net/browse/HSSP-4373" target="_blank" class="issue-key" onclick="event.stopPropagation()" onmouseenter="event.stopPropagation()">HSSP-4373</a></div><div class="issue-body"><div class="issue-summary">Build the Eskimi DSP Integration</div><div class="issue-meta"><span class="badge-status badge-default">In Progress</span></div></div></div><div class="issue-row" data-key="HSSP-4209" onmouseenter="showCard(event,'HSSP-4209')" onmouseleave="hideCard()" onclick="openIssueModal('HSSP-4209')"><div class="issue-left"><svg width="13" height="13" viewBox="0 0 13 13" style="flex-shrink:0;margin-top:2px"><rect width="13" height="13" rx="2" fill="#22c55e"/></svg><a href="https://perion.atlassian.net/browse/HSSP-4209" target="_blank" class="issue-key" onclick="event.stopPropagation()" onmouseenter="event.stopPropagation()">HSSP-4209</a></div><div class="issue-body"><div class="issue-summary">SSP: Flexible Rate Card Pricing</div><div class="issue-meta"><span class="badge-status badge-review">In Review</span></div></div></div><div class="issue-row" data-key="HSSP-4386" onmouseenter="showCard(event,'HSSP-4386')" onmouseleave="hideCard()" onclick="openIssueModal('HSSP-4386')"><div class="issue-left"><svg width="13" height="13" viewBox="0 0 13 13" style="flex-shrink:0;margin-top:2px"><rect width="13" height="13" rx="2" fill="#3b82f6"/></svg><a href="https://perion.atlassian.net/browse/HSSP-4386" target="_blank" class="issue-key" onclick="event.stopPropagation()" onmouseenter="event.stopPropagation()">HSSP-4386</a></div><div class="issue-body"><div class="issue-summary">Greenbids Throttler: Add Tailor to hs-openrtb</div><div class="issue-meta"><span class="badge-status badge-staging">In Staging</span></div></div></div><div class="issue-row" data-key="HSSP-4375" onmouseenter="showCard(event,'HSSP-4375')" onmouseleave="hideCard()" onclick="openIssueModal('HSSP-4375')"><div class="issue-left"><svg width="13" height="13" viewBox="0 0 13 13" style="flex-shrink:0;margin-top:2px"><rect width="13" height="13" rx="2" fill="#3b82f6"/></svg><a href="https://perion.atlassian.net/browse/HSSP-4375" target="_blank" class="issue-key" onclick="event.stopPropagation()" onmouseenter="event.stopPropagation()">HSSP-4375</a></div><div class="issue-body"><div class="issue-summary">Pacing CD: CampaignsAPI Package Pacing Model &amp; Endpoints</div><div class="issue-meta"><span class="badge-status badge-review">In Review</span></div></div></div><div class="issue-row" data-key="HSSP-4394" onmouseenter="showCard(event,'HSSP-4394')" onmouseleave="hideCard()" onclick="openIssueModal('HSSP-4394')"><div class="issue-left"><svg width="13" height="13" viewBox="0 0 13 13" style="flex-shrink:0;margin-top:2px"><rect width="13" height="13" rx="2" fill="#3b82f6"/></svg><a href="https://perion.atlassian.net/browse/HSSP-4394" target="_blank" class="issue-key" onclick="event.stopPropagation()" onmouseenter="event.stopPropagation()">HSSP-4394</a></div><div class="issue-body"><div class="issue-summary">Pacing CD: Track Package Spend on Every Bid Event</div><div class="issue-meta"><span class="badge-status badge-review">In Review</span></div></div></div><div class="issue-row" data-key="HSSP-4390" onmouseenter="showCard(event,'HSSP-4390')" onmouseleave="hideCard()" onclick="openIssueModal('HSSP-4390')"><div class="issue-left"><svg width="13" height="13" viewBox="0 0 13 13" style="flex-shrink:0;margin-top:2px"><rect width="13" height="13" rx="2" fill="#3b82f6"/></svg><a href="https://perion.atlassian.net/browse/HSSP-4390" target="_blank" class="issue-key" onclick="event.stopPropagation()" onmouseenter="event.stopPropagation()">HSSP-4390</a></div><div class="issue-body"><div class="issue-summary">Pacing CD: Wire Package Entity into Nirvana Pacing</div><div class="issue-meta"><span class="badge-status badge-review">In Review</span></div></div></div><div class="issue-row" data-key="HSSP-4391" onmouseenter="showCard(event,'HSSP-4391')" onmouseleave="hideCard()" onclick="openIssueModal('HSSP-4391')"><div class="issue-left"><svg width="13" height="13" viewBox="0 0 13 13" style="flex-shrink:0;margin-top:2px"><rect width="13" height="13" rx="2" fill="#3b82f6"/></svg><a href="https://perion.atlassian.net/browse/HSSP-4391" target="_blank" class="issue-key" onclick="event.stopPropagation()" onmouseenter="event.stopPropagation()">HSSP-4391</a></div><div class="issue-body"><div class="issue-summary">Pacing CD: Package Spend Models &amp; Service Layer</div><div class="issue-meta"><span class="badge-status badge-review">In Review</span></div></div></div><div class="issue-row" data-key="HSSP-4395" onmouseenter="showCard(event,'HSSP-4395')" onmouseleave="hideCard()" onclick="openIssueModal('HSSP-4395')"><div class="issue-left"><svg width="13" height="13" viewBox="0 0 13 13" style="flex-shrink:0;margin-top:2px"><rect width="13" height="13" rx="2" fill="#3b82f6"/></svg><a href="https://perion.atlassian.net/browse/HSSP-4395" target="_blank" class="issue-key" onclick="event.stopPropagation()" onmouseenter="event.stopPropagation()">HSSP-4395</a></div><div class="issue-body"><div class="issue-summary">Pacing CD: Mark Paced Deals as Guaranteed in Bid Requests</div><div class="issue-meta"><span class="badge-status badge-review">In Review</span></div></div></div><div class="issue-row" data-key="HSSP-4010" onmouseenter="showCard(event,'HSSP-4010')" onmouseleave="hideCard()" onclick="openIssueModal('HSSP-4010')"><div class="issue-left"><svg width="13" height="13" viewBox="0 0 13 13" style="flex-shrink:0;margin-top:2px"><rect width="13" height="13" rx="2" fill="#3b82f6"/></svg><a href="https://perion.atlassian.net/browse/HSSP-4010" target="_blank" class="issue-key" onclick="event.stopPropagation()" onmouseenter="event.stopPropagation()">HSSP-4010</a></div><div class="issue-body"><div class="issue-summary">SSP Deal API: Get Deal(s) Endpoints</div><div class="issue-meta"><span class="badge-status badge-review">In Review</span></div></div></div><div class="issue-row" data-key="HSSP-4627" onmouseenter="showCard(event,'HSSP-4627')" onmouseleave="hideCard()" onclick="openIssueModal('HSSP-4627')"><div class="issue-left"><svg width="13" height="13" viewBox="0 0 13 13" style="flex-shrink:0;margin-top:2px"><rect width="13" height="13" rx="2" fill="#3b82f6"/></svg><a href="https://perion.atlassian.net/browse/HSSP-4627" target="_blank" class="issue-key" onclick="event.stopPropagation()" onmouseenter="event.stopPropagation()">HSSP-4627</a></div><div class="issue-body"><div class="issue-summary">SSP Deal API: Fix DSPs Endpoint Initialization</div><div class="issue-meta"><span class="badge-status badge-review">In Review</span></div></div></div><div class="issue-row" data-key="HSSP-4633" onmouseenter="showCard(event,'HSSP-4633')" onmouseleave="hideCard()" onclick="openIssueModal('HSSP-4633')"><div class="issue-left"><svg width="13" height="13" viewBox="0 0 13 13" style="flex-shrink:0;margin-top:2px"><rect width="13" height="13" rx="2" fill="#3b82f6"/></svg><a href="https://perion.atlassian.net/browse/HSSP-4633" target="_blank" class="issue-key" onclick="event.stopPropagation()" onmouseenter="event.stopPropagation()">HSSP-4633</a></div><div class="issue-body"><div class="issue-summary">Curate Dayparting: Filter Bids Outside Scheduled Hours</div><div class="issue-meta"><span class="badge-status badge-default">In Progress</span></div></div></div><div class="issue-row" data-key="HSSP-4632" onmouseenter="showCard(event,'HSSP-4632')" onmouseleave="hideCard()" onclick="openIssueModal('HSSP-4632')"><div class="issue-left"><svg width="13" height="13" viewBox="0 0 13 13" style="flex-shrink:0;margin-top:2px"><rect width="13" height="13" rx="2" fill="#3b82f6"/></svg><a href="https://perion.atlassian.net/browse/HSSP-4632" target="_blank" class="issue-key" onclick="event.stopPropagation()" onmouseenter="event.stopPropagation()">HSSP-4632</a></div><div class="issue-body"><div class="issue-summary">Curate Dayparting: Store Time-of-Day Schedule on Deals</div><div class="issue-meta"><span class="badge-status badge-default">In Progress</span></div></div></div><div class="issue-row" data-key="HSSP-3828" onmouseenter="showCard(event,'HSSP-3828')" onmouseleave="hideCard()" onclick="openIssueModal('HSSP-3828')"><div class="issue-left"><svg width="13" height="13" viewBox="0 0 13 13" style="flex-shrink:0;margin-top:2px"><rect width="13" height="13" rx="2" fill="#3b82f6"/></svg><a href="https://perion.atlassian.net/browse/HSSP-3828" target="_blank" class="issue-key" onclick="event.stopPropagation()" onmouseenter="event.stopPropagation()">HSSP-3828</a></div><div class="issue-body"><div class="issue-summary">SSP Deal API: Create Deals Programmatically</div><div class="issue-meta"><span class="badge-status badge-default">In Progress</span></div></div></div><div class="issue-row" data-key="HSSP-4579" onmouseenter="showCard(event,'HSSP-4579')" onmouseleave="hideCard()" onclick="openIssueModal('HSSP-4579')"><div class="issue-left"><svg width="13" height="13" viewBox="0 0 13 13" style="flex-shrink:0;margin-top:2px"><rect width="13" height="13" rx="2" fill="#3b82f6"/></svg><a href="https://perion.atlassian.net/browse/HSSP-4579" target="_blank" class="issue-key" onclick="event.stopPropagation()" onmouseenter="event.stopPropagation()">HSSP-4579</a></div><div class="issue-body"><div class="issue-summary">Curator Packs: Surface Deal Packs in DSP Targeting</div><div class="issue-meta"><span class="badge-status badge-review">In Review</span></div></div></div><div class="issue-row" data-key="HSSP-4376" onmouseenter="showCard(event,'HSSP-4376')" onmouseleave="hideCard()" onclick="openIssueModal('HSSP-4376')"><div class="issue-left"><svg width="13" height="13" viewBox="0 0 13 13" style="flex-shrink:0;margin-top:2px"><rect width="13" height="13" rx="2" fill="#3b82f6"/></svg><a href="https://perion.atlassian.net/browse/HSSP-4376" target="_blank" class="issue-key" onclick="event.stopPropagation()" onmouseenter="event.stopPropagation()">HSSP-4376</a></div><div class="issue-body"><div class="issue-summary">Pacing CD: Snapshot Package Pacing Progress to PlaylogsAPI</div><div class="issue-meta"><span class="badge-status badge-default">In Progress</span></div></div></div><div class="issue-row" data-key="HSSP-4328" onmouseenter="showCard(event,'HSSP-4328')" onmouseleave="hideCard()" onclick="openIssueModal('HSSP-4328')"><div class="issue-left"><svg width="13" height="13" viewBox="0 0 13 13" style="flex-shrink:0;margin-top:2px"><rect width="13" height="13" rx="2" fill="#3b82f6"/></svg><a href="https://perion.atlassian.net/browse/HSSP-4328" target="_blank" class="issue-key" onclick="event.stopPropagation()" onmouseenter="event.stopPropagation()">HSSP-4328</a></div><div class="issue-body"><div class="issue-summary">Pacing CD: Route Paced Deal Bid Flow Through Apiary</div><div class="issue-meta"><span class="badge-status badge-default">In Progress</span></div></div></div><div class="issue-row" data-key="HSSP-4295" onmouseenter="showCard(event,'HSSP-4295')" onmouseleave="hideCard()" onclick="openIssueModal('HSSP-4295')"><div class="issue-left"><svg width="13" height="13" viewBox="0 0 13 13" style="flex-shrink:0;margin-top:2px"><rect width="13" height="13" rx="2" fill="#3b82f6"/></svg><a href="https://perion.atlassian.net/browse/HSSP-4295" target="_blank" class="issue-key" onclick="event.stopPropagation()" onmouseenter="event.stopPropagation()">HSSP-4295</a></div><div class="issue-body"><div class="issue-summary">Pacing CD: Add Deal-Level Buckets to Master Pacer</div><div class="issue-meta"><span class="badge-status badge-default">In Progress</span></div></div></div><div class="issue-row" data-key="HSSP-4629" onmouseenter="showCard(event,'HSSP-4629')" onmouseleave="hideCard()" onclick="openIssueModal('HSSP-4629')"><div class="issue-left"><svg width="13" height="13" viewBox="0 0 13 13" style="flex-shrink:0;margin-top:2px"><rect width="13" height="13" rx="2" fill="#3b82f6"/></svg><a href="https://perion.atlassian.net/browse/HSSP-4629" target="_blank" class="issue-key" onclick="event.stopPropagation()" onmouseenter="event.stopPropagation()">HSSP-4629</a></div><div class="issue-body"><div class="issue-summary">Curate Event Targeting: Apply Event Criteria to Bid Stream</div><div class="issue-meta"><span class="badge-status badge-default">In Progress</span></div></div></div><div class="issue-row" data-key="HSSP-4581" onmouseenter="showCard(event,'HSSP-4581')" onmouseleave="hideCard()" onclick="openIssueModal('HSSP-4581')"><div class="issue-left"><svg width="13" height="13" viewBox="0 0 13 13" style="flex-shrink:0;margin-top:2px"><rect width="13" height="13" rx="2" fill="#3b82f6"/></svg><a href="https://perion.atlassian.net/browse/HSSP-4581" target="_blank" class="issue-key" onclick="event.stopPropagation()" onmouseenter="event.stopPropagation()">HSSP-4581</a></div><div class="issue-body"><div class="issue-summary">Curate Event Targeting: New Fee Type for Event-Gated Inventory</div><div class="issue-meta"><span class="badge-status badge-default">In Progress</span></div></div></div><div class="issue-row" data-key="HSSP-4648" onmouseenter="showCard(event,'HSSP-4648')" onmouseleave="hideCard()" onclick="openIssueModal('HSSP-4648')"><div class="issue-left"><svg width="13" height="13" viewBox="0 0 13 13" style="flex-shrink:0;margin-top:2px"><circle cx="6.5" cy="6.5" r="6.5" fill="#ef4444"/></svg><a href="https://perion.atlassian.net/browse/HSSP-4648" target="_blank" class="issue-key" onclick="event.stopPropagation()" onmouseenter="event.stopPropagation()">HSSP-4648</a></div><div class="issue-body"><div class="issue-summary">Fix: TTD PG Deal Creation Blocked by Future-Dated Flight Start</div><div class="issue-meta"><span class="badge-status badge-default">In Progress</span></div></div></div><div class="section-footer"><a href="https://perion.atlassian.net/issues?jql=project%20%3D%20HSSP%20AND%20status%20in%20%28%22In%20Staging%22%2C%22In%20Review%22%29%20AND%20issuetype%20not%20in%20%28%22Chore%22%2C%22Sub-task%22%2C%22Epic%22%2C%22Spike%22%29%20AND%20%22Epic%20Link%22%20not%20in%20%28HSSP-3096%2CHSSP-3606%2CHSSP-871%2CHSSP-3860%29%20ORDER%20BY%20updated%20DESC" target="_blank" rel="noopener noreferrer" onclick="window.open(this.href,'_blank');return false;">View filter in Jira ↗</a></div></div>
+  </div>
+  <div class="sidebar">
+    <div class="sidebar-card">
+      <div class="sidebar-header">
+        <span style="font-size:15px">📊</span>
+        <span class="sidebar-title">Epic Progress</span>
+        <button onclick="document.getElementById('gantt-overlay').classList.add('open');renderGantt()"
+                title="Open the Epic Timeline — a Gantt chart showing each epic's planned date range and progress"
+                style="background:none;border:1px solid var(--border-card);border-radius:6px;padding:2px 7px;font-size:11px;cursor:pointer;color:var(--text-muted);line-height:1.4">📅 Timeline</button>
+        <span class="sidebar-count" id="epic-count">14</span>
+      </div>
+      <div class="epic-filter-row">
+        <button class="ef-btn ef-active" onclick="filterEpics(this,'')">All</button>
+        <button class="ef-btn" onclick="filterEpics(this,'SSP')">SSP</button>
+        <button class="ef-btn" onclick="filterEpics(this,'Marketplace')">Marketplace</button>
+        <button class="ef-btn" onclick="filterEpics(this,'Curate')">Curate</button>
+      </div>
+      <div class="epic-item" data-epic="HSSP-3942" data-prefix="SSP" onmouseenter="showEpicCard(event,'HSSP-3942')" onmouseleave="hideCard()" onclick="openEpicModal('HSSP-3942')" style="cursor:pointer"><div class="ei-top"><div class="ei-left"><div class="ei-key-row"><a href="https://perion.atlassian.net/browse/HSSP-3942" target="_blank" class="ei-key" onclick="event.stopPropagation()" onmouseenter="event.stopPropagation()">HSSP-3942</a></div><span class="ei-name">SSP – Deal Price Flexibility</span></div><span class="ei-pct" style="color:#22c55e">95%</span></div><div class="ei-bar-track"><div class="ei-bar-fill" style="width:95%;background:#22c55e"></div></div><div class="ei-footer"><span class="ei-dates">Apr 1 → May 31</span><span class="ei-frac">1/1 issues</span></div></div><div class="epic-item" data-epic="HSSP-4071" data-prefix="Marketplace" onmouseenter="showEpicCard(event,'HSSP-4071')" onmouseleave="hideCard()" onclick="openEpicModal('HSSP-4071')" style="cursor:pointer"><div class="ei-top"><div class="ei-left"><div class="ei-key-row"><a href="https://perion.atlassian.net/browse/HSSP-4071" target="_blank" class="ei-key" onclick="event.stopPropagation()" onmouseenter="event.stopPropagation()">HSSP-4071</a></div><span class="ei-name">Marketplace – TTD Bid Expiration</span></div><span class="ei-pct" style="color:#22c55e">95%</span></div><div class="ei-bar-track"><div class="ei-bar-fill" style="width:95%;background:#22c55e"></div></div><div class="ei-footer"><span class="ei-dates">May 1 → Jun 30</span><span class="ei-frac">1/1 issues</span></div></div><div class="epic-item" data-epic="HSSP-4370" data-prefix="Marketplace" onmouseenter="showEpicCard(event,'HSSP-4370')" onmouseleave="hideCard()" onclick="openEpicModal('HSSP-4370')" style="cursor:pointer"><div class="ei-top"><div class="ei-left"><div class="ei-key-row"><a href="https://perion.atlassian.net/browse/HSSP-4370" target="_blank" class="ei-key" onclick="event.stopPropagation()" onmouseenter="event.stopPropagation()">HSSP-4370</a></div><span class="ei-name">Marketplace – Greenbids Traffic Shaper</span></div><span class="ei-pct" style="color:#f59e0b">75%</span></div><div class="ei-bar-track"><div class="ei-bar-fill" style="width:75%;background:#f59e0b"></div></div><div class="ei-footer"><span class="ei-dates">May 1 → Jun 30</span><span class="ei-frac">1+1▸/2 issues</span></div></div><div class="epic-item" data-epic="HSSP-3944" data-prefix="Curate" onmouseenter="showEpicCard(event,'HSSP-3944')" onmouseleave="hideCard()" onclick="openEpicModal('HSSP-3944')" style="cursor:pointer"><div class="ei-top"><div class="ei-left"><div class="ei-key-row"><a href="https://perion.atlassian.net/browse/HSSP-3944" target="_blank" class="ei-key" onclick="event.stopPropagation()" onmouseenter="event.stopPropagation()">HSSP-3944</a></div><span class="ei-name">Curate – Curator & Buyer Packs</span></div><span class="ei-pct" style="color:#f59e0b">62%</span></div><div class="ei-bar-track"><div class="ei-bar-fill" style="width:62%;background:#f59e0b"></div></div><div class="ei-footer"><span class="ei-dates">Apr 1 → May 31</span><span class="ei-frac">8/13 issues</span></div></div><div class="epic-item" data-epic="HSSP-4035" data-prefix="Curate" onmouseenter="showEpicCard(event,'HSSP-4035')" onmouseleave="hideCard()" onclick="openEpicModal('HSSP-4035')" style="cursor:pointer"><div class="ei-top"><div class="ei-left"><div class="ei-key-row"><a href="https://perion.atlassian.net/browse/HSSP-4035" target="_blank" class="ei-key" onclick="event.stopPropagation()" onmouseenter="event.stopPropagation()">HSSP-4035</a></div><span class="ei-name">Curate – Pacing CD</span></div><span class="ei-pct" style="color:#f59e0b">60%</span></div><div class="ei-bar-track"><div class="ei-bar-fill" style="width:60%;background:#f59e0b"></div></div><div class="ei-footer"><span class="ei-dates">Apr 1 → Jun 30</span><span class="ei-frac">11+3▸/21 issues</span></div></div><div class="epic-item" data-epic="HSSP-3904" data-prefix="SSP" onmouseenter="showEpicCard(event,'HSSP-3904')" onmouseleave="hideCard()" onclick="openEpicModal('HSSP-3904')" style="cursor:pointer"><div class="ei-top"><div class="ei-left"><div class="ei-key-row"><a href="https://perion.atlassian.net/browse/HSSP-3904" target="_blank" class="ei-key" onclick="event.stopPropagation()" onmouseenter="event.stopPropagation()">HSSP-3904</a></div><span class="ei-name">SSP – Deal API</span></div><span class="ei-pct" style="color:#f59e0b">58%</span></div><div class="ei-bar-track"><div class="ei-bar-fill" style="width:58%;background:#f59e0b"></div></div><div class="ei-footer"><span class="ei-dates">Jan 1 → Jun 30</span><span class="ei-frac">3+1▸/6 pts</span></div></div><div class="epic-item" data-epic="HSSP-4205" data-prefix="Marketplace" onmouseenter="showEpicCard(event,'HSSP-4205')" onmouseleave="hideCard()" onclick="openEpicModal('HSSP-4205')" style="cursor:pointer"><div class="ei-top"><div class="ei-left"><div class="ei-key-row"><a href="https://perion.atlassian.net/browse/HSSP-4205" target="_blank" class="ei-key" onclick="event.stopPropagation()" onmouseenter="event.stopPropagation()">HSSP-4205</a></div><span class="ei-name">Marketplace – Eskimi DSP Integration</span></div><span class="ei-pct" style="color:#f59e0b">50%</span></div><div class="ei-bar-track"><div class="ei-bar-fill" style="width:50%;background:#f59e0b"></div></div><div class="ei-footer"><span class="ei-dates">May 1 → May 31</span><span class="ei-frac">0+1▸/1 issues</span></div></div><div class="epic-item" data-epic="HSSP-2816" data-prefix="SSP" onmouseenter="showEpicCard(event,'HSSP-2816')" onmouseleave="hideCard()" onclick="openEpicModal('HSSP-2816')" style="cursor:pointer"><div class="ei-top"><div class="ei-left"><div class="ei-key-row"><a href="https://perion.atlassian.net/browse/HSSP-2816" target="_blank" class="ei-key" onclick="event.stopPropagation()" onmouseenter="event.stopPropagation()">HSSP-2816</a></div><span class="ei-name">SSP – Cross SSP Curation Follow-ups</span></div><span class="ei-pct" style="color:#3b82f6">40%</span></div><div class="ei-bar-track"><div class="ei-bar-fill" style="width:40%;background:#3b82f6"></div></div><div class="ei-footer"><span class="ei-dates">Jul 1 → Jul 30</span><span class="ei-frac">2/5 pts</span></div></div><div class="epic-item" data-epic="HSSP-4034" data-prefix="Curate" onmouseenter="showEpicCard(event,'HSSP-4034')" onmouseleave="hideCard()" onclick="openEpicModal('HSSP-4034')" style="cursor:pointer"><div class="ei-top"><div class="ei-left"><div class="ei-key-row"><a href="https://perion.atlassian.net/browse/HSSP-4034" target="_blank" class="ei-key" onclick="event.stopPropagation()" onmouseenter="event.stopPropagation()">HSSP-4034</a></div><span class="ei-name">Curate – Dayparting</span></div><span class="ei-pct" style="color:#3b82f6">25%</span></div><div class="ei-bar-track"><div class="ei-bar-fill" style="width:25%;background:#3b82f6"></div></div><div class="ei-footer"><span class="ei-dates">May 1 → Jun 30</span><span class="ei-frac">0+2▸/4 issues</span></div></div><div class="epic-item" data-epic="HSSP-3349" data-prefix="Curate" onmouseenter="showEpicCard(event,'HSSP-3349')" onmouseleave="hideCard()" onclick="openEpicModal('HSSP-3349')" style="cursor:pointer"><div class="ei-top"><div class="ei-left"><div class="ei-key-row"><a href="https://perion.atlassian.net/browse/HSSP-3349" target="_blank" class="ei-key" onclick="event.stopPropagation()" onmouseenter="event.stopPropagation()">HSSP-3349</a></div><span class="ei-name">Curate – Event Targeting</span></div><span class="ei-pct" style="color:#3b82f6">20%</span></div><div class="ei-bar-track"><div class="ei-bar-fill" style="width:20%;background:#3b82f6"></div></div><div class="ei-footer"><span class="ei-dates">May 1 → Jun 30</span><span class="ei-frac">0+2▸/5 issues</span></div></div><div class="epic-item" data-epic="HSSP-3953" data-prefix="" onmouseenter="showEpicCard(event,'HSSP-3953')" onmouseleave="hideCard()" onclick="openEpicModal('HSSP-3953')" style="cursor:pointer"><div class="ei-top"><div class="ei-left"><div class="ei-key-row"><a href="https://perion.atlassian.net/browse/HSSP-3953" target="_blank" class="ei-key" onclick="event.stopPropagation()" onmouseenter="event.stopPropagation()">HSSP-3953</a></div><span class="ei-name">Go Migration – DSP Integrations</span></div><span class="ei-pct" style="color:#3b82f6">3%</span></div><div class="ei-bar-track"><div class="ei-bar-fill" style="width:3%;background:#3b82f6"></div></div><div class="ei-footer"><span class="ei-dates">Jul 1 → Sep 30</span><span class="ei-frac">1/29 issues</span></div></div><div class="epic-item" data-epic="HSSP-4631" data-prefix="Curate" onmouseenter="showEpicCard(event,'HSSP-4631')" onmouseleave="hideCard()" onclick="openEpicModal('HSSP-4631')" style="cursor:pointer"><div class="ei-top"><div class="ei-left"><div class="ei-key-row"><a href="https://perion.atlassian.net/browse/HSSP-4631" target="_blank" class="ei-key" onclick="event.stopPropagation()" onmouseenter="event.stopPropagation()">HSSP-4631</a></div><span class="ei-name">Curate – Markup Reporting</span></div><span class="ei-pct" style="color:#3b82f6">0%</span></div><div class="ei-bar-track"><div class="ei-bar-fill" style="width:0%;background:#3b82f6"></div></div><div class="ei-footer"><span class="ei-dates">Jul 1 → Sep 30</span><span class="ei-frac">0/0 issues</span></div></div><div class="epic-item" data-epic="HSSP-4352" data-prefix="Marketplace" onmouseenter="showEpicCard(event,'HSSP-4352')" onmouseleave="hideCard()" onclick="openEpicModal('HSSP-4352')" style="cursor:pointer"><div class="ei-top"><div class="ei-left"><div class="ei-key-row"><a href="https://perion.atlassian.net/browse/HSSP-4352" target="_blank" class="ei-key" onclick="event.stopPropagation()" onmouseenter="event.stopPropagation()">HSSP-4352</a></div><span class="ei-name">Marketplace – Ad Req/Res Reporting</span></div><span class="ei-pct" style="color:#3b82f6">0%</span></div><div class="ei-bar-track"><div class="ei-bar-fill" style="width:0%;background:#3b82f6"></div></div><div class="ei-footer"><span class="ei-dates">Jul 1 → Sep 29</span><span class="ei-frac">0/0 issues</span></div></div><div class="epic-item" data-epic="HSSP-1014" data-prefix="Marketplace" onmouseenter="showEpicCard(event,'HSSP-1014')" onmouseleave="hideCard()" onclick="openEpicModal('HSSP-1014')" style="cursor:pointer"><div class="ei-top"><div class="ei-left"><div class="ei-key-row"><a href="https://perion.atlassian.net/browse/HSSP-1014" target="_blank" class="ei-key" onclick="event.stopPropagation()" onmouseenter="event.stopPropagation()">HSSP-1014</a></div><span class="ei-name">Marketplace – Loss Reasons Reporting</span></div><span class="ei-pct" style="color:#3b82f6">0%</span></div><div class="ei-bar-track"><div class="ei-bar-fill" style="width:0%;background:#3b82f6"></div></div><div class="ei-footer"><span class="ei-dates">Apr 1 → Jun 30</span><span class="ei-frac">0/1 pts</span></div></div>
+    </div>
+    <div class="sidebar-card" style="margin-top:12px;--accent-top:#22c55e">
+      <div class="sidebar-header" style="border-top-color:#22c55e">
+        <span style="font-size:15px">🏁</span>
+        <span class="sidebar-title">Recently Wrapped Up</span>
+        <span class="sidebar-count">1</span>
+      </div>
+      <div class="epic-item" data-epic="HSSP-4403" onmouseenter="showEpicCard(event,'HSSP-4403')" onmouseleave="hideCard()" onclick="openEpicModal('HSSP-4403')" style="cursor:pointer"><div class="ei-top"><div class="ei-left"><div class="ei-key-row"><a href="https://perion.atlassian.net/browse/HSSP-4403" target="_blank" class="ei-key" onclick="event.stopPropagation()" onmouseenter="event.stopPropagation()">HSSP-4403</a></div><span class="ei-name">SSP – hs-openrtb Scalability Fixes</span></div><span class="ei-pct" style="color:#22c55e">✓</span></div><div class="ei-bar-track"><div class="ei-bar-fill" style="width:100%;background:#22c55e"></div></div><div class="ei-footer"><span class="ei-dates" style="color:#22c55e;font-weight:600">Done</span></div></div>
+    </div>
+  </div>
+</div>
+
+<div class="footer">
+  Generated 21 May, 2026 ·
+  <a href="https://perion.atlassian.net/jira/software/c/projects/HSSP/boards/380?assignee=5d6fd099522f790d9c77292f" target="_blank" rel="noopener noreferrer"
+     onclick="window.open(this.href,'_blank');return false;">HSSP Board ↗</a>
+</div>
+
+<script>
+const ISSUES = {
+  'HSSP-4194': {type:'Story',summary:'Curators Can Create & Edit Marketplace Rules',status:'Done',assignee:'Spencer Kifell',avatar:'https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/712020:d6fbad83-c1e2-41c5-b187-a9040a3b42a5/c538b162-2eaa-4705-ae6d-ba378b11d071/48',desc:'Allow curators to create and edit marketplace rules (saved screen collections) for inventory targeting. Includes a Default for Targeting control, Pack ID optional field, and a call-to-action for new curators.',priority:'Normal',url:'https://perion.atlassian.net/browse/HSSP-4194'},
+  'HSSP-4196': {type:'Story',summary:'Curators Get a Marketplace Rules Dashboard',status:'Done',assignee:'Spencer Kifell',avatar:'https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/712020:d6fbad83-c1e2-41c5-b187-a9040a3b42a5/c538b162-2eaa-4705-ae6d-ba378b11d071/48',desc:'Adds the Marketplace Rules landing page listing the org\'s saved screen collections, plus a Marketplace Rules link in the left sidebar under Curate.',priority:'Normal',url:'https://perion.atlassian.net/browse/HSSP-4196'},
+  'HSSP-4195': {type:'Story',summary:'Marketplace Rules Appear on Deal Targeting Map',status:'Done',assignee:'Spencer Kifell',avatar:'https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/712020:d6fbad83-c1e2-41c5-b187-a9040a3b42a5/c538b162-2eaa-4705-ae6d-ba378b11d071/48',desc:'Show curators\' saved screen packs (Marketplace Rules) on the inventory targeting map. Auto-select rules flagged as \'targeted by default\' and auto-exclude those flagged \'excluded by default\'.',priority:'Normal',url:'https://perion.atlassian.net/browse/HSSP-4195'},
+  'HSSP-3680': {type:'Bug',summary:'Fix: Publisher Deal Charts Display Correctly',status:'In UAT',assignee:'Spencer Kifell',avatar:'https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/712020:d6fbad83-c1e2-41c5-b187-a9040a3b42a5/c538b162-2eaa-4705-ae6d-ba378b11d071/48',desc:'3 chart issues on Publisher Deal pages: (1) currency symbol shown twice (e.g. CAD$$), (2) Revenue chart Y-axis labels cut off on the left, (3) Impressions chart inconsistently switches between raw numbers and k-format.',priority:'Normal',url:'https://perion.atlassian.net/browse/HSSP-3680'},
+  'HSSP-4299': {type:'Bug',summary:'Fix: Curate Orgs Respect Default Country Setting',status:'In UAT',assignee:'Spencer Kifell',avatar:'https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/712020:d6fbad83-c1e2-41c5-b187-a9040a3b42a5/c538b162-2eaa-4705-ae6d-ba378b11d071/48',desc:'Curate orgs were showing all countries when building curated deals or browsing the Marketplace. The country default configured in the admin console now correctly scopes the inventory view and deal listings.',priority:'Normal',url:'https://perion.atlassian.net/browse/HSSP-4299'},
+  'HSSP-4437': {type:'Bug',summary:'Fix: Budget Min/Max Missing from Curated Deal API',status:'Done',assignee:'Christian Thibeault',avatar:'https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/712020:aecc67a7-3f02-45e0-87bb-6e10f7d9307d/7591fbab-5b55-4b8c-81d6-b0c436f2a3e7/48',desc:'Budget minimum and maximum fields were missing from the curated deal API response, preventing downstream services from reading deal budget constraints correctly.',priority:'Normal',url:'https://perion.atlassian.net/browse/HSSP-4437'},
+  'HSSP-4425': {type:'Task',summary:'Pacing CD: Switch On the Pacing Curve Generator',status:'Done',assignee:'Billy Mercier',avatar:'',desc:'Activates the background worker that generates delivery pacing curves for deals on schedule. The final enablement step — once live, deals can begin tracking and throttling spend against their budget curves in real time.',priority:'Normal',url:'https://perion.atlassian.net/browse/HSSP-4425'},
+  'HSSP-4293': {type:'Task',summary:'Pacing CD: Nirvana Deal-Level Pacing Curves',status:'Done',assignee:'Billy Mercier',avatar:'',desc:'Introduces pacing curves at the deal level in Nirvana — tracking delivery against a target curve so the system can throttle or accelerate spend in real time to hit budget goals.',priority:'Normal',url:'https://perion.atlassian.net/browse/HSSP-4293'},
+  'HSSP-4354': {type:'Task',summary:'Pacing CD: Add Pacing Fields to Package Model',status:'Done',assignee:'Christian Thibeault',avatar:'https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/712020:aecc67a7-3f02-45e0-87bb-6e10f7d9307d/7591fbab-5b55-4b8c-81d6-b0c436f2a3e7/48',desc:'Extends the Package data model in the Campaigns API with pacing-related fields (budget targets, delivery windows, pacing strategy) needed for the package-level pacing engine.',priority:'Normal',url:'https://perion.atlassian.net/browse/HSSP-4354'},
+  'HSSP-4419': {type:'Task',summary:'Pacing CD: Block Audience Pacing on Paced Deals',status:'Done',assignee:'Billy Mercier',avatar:'',desc:'Prevents audience pacing strategy from being applied to deals that use the new curated deal pacing. Avoids conflicting pacing signals that would cause unpredictable delivery.',priority:'Normal',url:'https://perion.atlassian.net/browse/HSSP-4419'},
+  'HSSP-4327': {type:'Task',summary:'Pacing CD: Deal Pacing Info in Campaigns API',status:'Done',assignee:'Billy Mercier',avatar:'',desc:'Exposes deal-level pacing information (current spend rate, pacing status, delivery vs. curve) through the Campaigns API so dashboards and reporting tools can surface it.',priority:'Normal',url:'https://perion.atlassian.net/browse/HSSP-4327'},
+  'HSSP-4294': {type:'Task',summary:'Pacing CD: Trigger Pacing Curve Generation in Nirvana',status:'Done',assignee:'Billy Mercier',avatar:'',desc:'Nirvana now triggers the generation of pacing curves for deals at each pacing interval. The curves define the expected spend trajectory so real-time delivery can be compared against target.',priority:'Normal',url:'https://perion.atlassian.net/browse/HSSP-4294'},
+  'HSSP-4264': {type:'Task',summary:'Pacing CD: Package Pacing Curve Model & Endpoints',status:'Done',assignee:'Christian Thibeault',avatar:'https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/712020:aecc67a7-3f02-45e0-87bb-6e10f7d9307d/7591fbab-5b55-4b8c-81d6-b0c436f2a3e7/48',desc:'Adds the PackagePacingCurve data model, service layer, and REST endpoints. The pacing curve defines the expected delivery trajectory per package so the engine can compare actual vs. target spend at each interval.',priority:'Normal',url:'https://perion.atlassian.net/browse/HSSP-4264'},
+  'HSSP-4444': {type:'Task',summary:'TTD PG Deals: Raise Bid Rate to 95%',status:'Done',assignee:'Pascal-Alexandre Morel',avatar:'https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/60e3264b471e61006a304f47/7058477c-03d2-43f7-9ff5-138b1a90b703/48',desc:'Updated TTD Programmatic Guaranteed deal configuration to bid at 95% (up from 50%). Higher bid rate improves win rates for PG deals, where inventory is reserved and a missed bid means lost committed revenue.',priority:'High',url:'https://perion.atlassian.net/browse/HSSP-4444'},
+  'HSSP-4446': {type:'Task',summary:'TTD PG Deals: Backfill Existing Deals to 95% Bid Rate',status:'Done',assignee:'Pascal-Alexandre Morel',avatar:'https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/60e3264b471e61006a304f47/7058477c-03d2-43f7-9ff5-138b1a90b703/48',desc:'Manual backfill script to migrate all existing TTD PG deals from the old 50% bid rate to the new 95% rate. Ensures deals already live on the platform benefit from the same improvement.',priority:'Normal',url:'https://perion.atlassian.net/browse/HSSP-4446'},
+  'HSSP-4422': {type:'Task',summary:'Remove Appcelerate DSP Integration',status:'Done',assignee:'Varun Hooda',avatar:'https://secure.gravatar.com/avatar/95726aaadf3ba4622b1d4cc8733bbaca?d=https%3A%2F%2Favatar-management--avatars.us-west-2.prod.public.atl-paas.net%2Finitials%2FVH-2.png',desc:'Removes the Appcelerate DSP from the platform. The integration has been sunset and all associated configuration, endpoints, and adapter code are being cleaned up.',priority:'Normal',url:'https://perion.atlassian.net/browse/HSSP-4422'},
+  'HSSP-1549': {type:'Task',summary:'Curated Deals Now Filterable in Analytics Reports',status:'In UAT',assignee:'Alex Tomkins',avatar:'https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/6369390c96243ac755edc8c9/d3ab0029-1352-40ff-a200-b9b7eb16282d/48',desc:'Reporting pages now support filtering by curated deal — publishers and buyers can scope analytics to individual curated deals without needing to sift through all deal traffic manually.',priority:'Normal',url:'https://perion.atlassian.net/browse/HSSP-1549'},
+  'HSSP-4386': {type:'Task',summary:'Greenbids Throttler: Add Tailor to hs-openrtb',status:'In Staging',assignee:'Alex Tomkins',avatar:'https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/6369390c96243ac755edc8c9/d3ab0029-1352-40ff-a200-b9b7eb16282d/48',desc:'Wires the Greenbids Tailor traffic-shaping model into hs-openrtb so bid requests can be filtered before they reach DSPs. Core step for the Greenbids Traffic Shaper epic.',priority:'Normal',url:'https://perion.atlassian.net/browse/HSSP-4386'},
+  'HSSP-4375': {type:'Task',summary:'Pacing CD: CampaignsAPI Package Pacing Model & Endpoints',status:'In Review',assignee:'Pascal-Alexandre Morel',avatar:'https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/60e3264b471e61006a304f47/7058477c-03d2-43f7-9ff5-138b1a90b703/48',desc:'Adds the PackageCachedPacing data model, service layer, and REST endpoints to the Campaigns API — the data backbone required before the Nirvana pacing integration can be completed.',priority:'Normal',url:'https://perion.atlassian.net/browse/HSSP-4375'},
+  'HSSP-4394': {type:'Task',summary:'Pacing CD: Track Package Spend on Every Bid Event',status:'In Review',assignee:'Christian Thibeault',avatar:'https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/712020:aecc67a7-3f02-45e0-87bb-6e10f7d9307d/7591fbab-5b55-4b8c-81d6-b0c436f2a3e7/48',desc:'Updates Nirvana to record package-level spend on each bid, confirmation, and loss event — giving the pacing engine a real-time signal to throttle delivery against the budget curve.',priority:'Normal',url:'https://perion.atlassian.net/browse/HSSP-4394'},
+  'HSSP-4390': {type:'Task',summary:'Pacing CD: Wire Package Entity into Nirvana Pacing',status:'In Review',assignee:'Christian Thibeault',avatar:'https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/712020:aecc67a7-3f02-45e0-87bb-6e10f7d9307d/7591fbab-5b55-4b8c-81d6-b0c436f2a3e7/48',desc:'Integrates the Package entity into Nirvana\'s existing Paceable plumbing so deals can be grouped and paced at the package level alongside line-item pacing.',priority:'Normal',url:'https://perion.atlassian.net/browse/HSSP-4390'},
+  'HSSP-4391': {type:'Task',summary:'Pacing CD: Package Spend Models & Service Layer',status:'In Review',assignee:'Christian Thibeault',avatar:'https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/712020:aecc67a7-3f02-45e0-87bb-6e10f7d9307d/7591fbab-5b55-4b8c-81d6-b0c436f2a3e7/48',desc:'Standalone data models and service layer for tracking aggregated spend per package. Used by the pacing curve engine to compute delivery vs. target at each interval.',priority:'Normal',url:'https://perion.atlassian.net/browse/HSSP-4391'},
+  'HSSP-4010': {type:'Task',summary:'SSP Deal API: Get Deal(s) Endpoints',status:'In Review',assignee:'Varun Hooda',avatar:'https://secure.gravatar.com/avatar/95726aaadf3ba4622b1d4cc8733bbaca?d=https%3A%2F%2Favatar-management--avatars.us-west-2.prod.public.atl-paas.net%2Finitials%2FVH-2.png',desc:'Read endpoints for the SSP Deal API — single-deal and multi-deal lookups. Completes the core CRUD surface alongside the create endpoint already shipped.',priority:'Normal',url:'https://perion.atlassian.net/browse/HSSP-4010'},
+  'HSSP-4627': {type:'Task',summary:'SSP Deal API: Fix DSPs Endpoint Initialization',status:'In Review',assignee:'Varun Hooda',avatar:'https://secure.gravatar.com/avatar/95726aaadf3ba4622b1d4cc8733bbaca?d=https%3A%2F%2Favatar-management--avatars.us-west-2.prod.public.atl-paas.net%2Finitials%2FVH-2.png',desc:'The get-DSPs endpoint was partially initializing on startup and test mocks were inconsistent. Fix ensures clean initialization and reliable test coverage.',priority:'Normal',url:'https://perion.atlassian.net/browse/HSSP-4627'},
+  'HSSP-4395': {type:'Task',summary:'Pacing CD: Mark Paced Deals as Guaranteed in Bid Requests',status:'In Review',assignee:'Christian Thibeault',avatar:'https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/712020:aecc67a7-3f02-45e0-87bb-6e10f7d9307d/7591fbab-5b55-4b8c-81d6-b0c436f2a3e7/48',desc:'When a curated deal has a delivery pacing curve, it is now sent to buyers as a guaranteed deal — signaling they must bid on it. Ensures paced deals receive the priority treatment required to hit their delivery targets.',priority:'Normal',url:'https://perion.atlassian.net/browse/HSSP-4395'},
+  'HSSP-4579': {type:'Task',summary:'Curator Packs: Surface Deal Packs in DSP Targeting',status:'In Review',assignee:'Spencer Kifell',avatar:'https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/712020:d6fbad83-c1e2-41c5-b187-a9040a3b42a5/c538b162-2eaa-4705-ae6d-ba378b11d071/48',desc:'DSP buyers can now select from Curator Packs when setting up campaigns in the targeting interface — choosing pre-curated inventory groups instead of building targeting from scratch. Completes the packs experience for both curators and buyers.',priority:'Normal',url:'https://perion.atlassian.net/browse/HSSP-4579'},
+  'HSSP-4633': {type:'Task',summary:'Curate Dayparting: Filter Bids Outside Scheduled Hours',status:'In Progress',assignee:'Ruben Buelvas',avatar:'https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/712020:816ea750-4909-44e1-b65b-f6230e4ca8c4/f90971a4-177a-4e1b-8a70-6e5ca5e82d80/48',desc:'The bidding engine now checks a curated deal\'s day-part schedule before sending a bid request. Requests that fall outside configured time windows are filtered out, so spend only flows during the hours the deal is set to run.',priority:'Normal',url:'https://perion.atlassian.net/browse/HSSP-4633'},
+  'HSSP-4632': {type:'Task',summary:'Curate Dayparting: Store Time-of-Day Schedule on Deals',status:'In Progress',assignee:'Ruben Buelvas',avatar:'https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/712020:816ea750-4909-44e1-b65b-f6230e4ca8c4/f90971a4-177a-4e1b-8a70-6e5ca5e82d80/48',desc:'Extends the curated deal model to store day-part schedules — specifying which days and hours a deal should actively bid. Prerequisite for the bidding engine to enforce time-slot restrictions.',priority:'Normal',url:'https://perion.atlassian.net/browse/HSSP-4632'},
+  'HSSP-3828': {type:'Task',summary:'SSP Deal API: Create Deals Programmatically',status:'In Progress',assignee:'Varun Hooda',avatar:'https://secure.gravatar.com/avatar/95726aaadf3ba4622b1d4cc8733bbaca?d=https%3A%2F%2Favatar-management--avatars.us-west-2.prod.public.atl-paas.net%2Finitials%2FVH-2.png',desc:'Publishers and curators can now create deals through the SSP API — specifying deal type, auction type, flight dates, budget caps, CPM floor, and buyer allowlists. Complements the existing read and update endpoints to complete the programmatic deal management surface.',priority:'Normal',url:'https://perion.atlassian.net/browse/HSSP-3828'},
+  'HSSP-4376': {type:'Task',summary:'Pacing CD: Snapshot Package Pacing Progress to PlaylogsAPI',status:'In Progress',assignee:'Pascal-Alexandre Morel',avatar:'https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/60e3264b471e61006a304f47/7058477c-03d2-43f7-9ff5-138b1a90b703/48',desc:'Writes package-level pacing progress snapshots to PlaylogsAPI at each interval — recording actual vs. expected delivery so the pacing engine can adjust spend rate in subsequent windows.',priority:'Normal',url:'https://perion.atlassian.net/browse/HSSP-4376'},
+  'HSSP-4328': {type:'Task',summary:'Pacing CD: Route Paced Deal Bid Flow Through Apiary',status:'In Progress',assignee:'Billy Mercier',avatar:'',desc:'Updates Apiary to handle the full bid lifecycle for paced curated deals — receiving bid requests, enforcing pacing budget caps, and forwarding qualified bids to the exchange.',priority:'Normal',url:'https://perion.atlassian.net/browse/HSSP-4328'},
+  'HSSP-4295': {type:'Task',summary:'Pacing CD: Add Deal-Level Buckets to Master Pacer',status:'In Progress',assignee:'Billy Mercier',avatar:'',desc:'Extends the master pacing service with deal-level time buckets — discrete spend windows that let the pacer track how much budget was used in each interval and calculate how much is available in the next.',priority:'Normal',url:'https://perion.atlassian.net/browse/HSSP-4295'},
+  'HSSP-4629': {type:'Task',summary:'Curate Event Targeting: Apply Event Criteria to Bid Stream',status:'In Progress',assignee:'Nathan Chao',avatar:'https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/5d6fd099522f790d9c77292f/86b38c6d-2583-40ef-8351-5b88f08c0a3f/48',desc:'Nirvana now evaluates a curated deal\'s event targeting criteria on each incoming bid request, filtering out inventory that doesn\'t match the configured event parameters — ensuring spend only flows to inventory associated with targeted events.',priority:'Normal',url:'https://perion.atlassian.net/browse/HSSP-4629'},
+  'HSSP-4581': {type:'Task',summary:'Curate Event Targeting: New Fee Type for Event-Gated Inventory',status:'In Progress',assignee:'Nathan Chao',avatar:'https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/5d6fd099522f790d9c77292f/86b38c6d-2583-40ef-8351-5b88f08c0a3f/48',desc:'Adds a new offline fee type to the Finance API for curated deals that use event-based targeting — enabling proper revenue attribution and billing for inventory gated behind live event criteria.',priority:'Normal',url:'https://perion.atlassian.net/browse/HSSP-4581'},
+  'HSSP-4648': {type:'Bug',summary:'Fix: TTD PG Deal Creation Blocked by Future-Dated Flight Start',status:'In Progress',assignee:'Pascal-Alexandre Morel',avatar:'https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/60e3264b471e61006a304f47/7058477c-03d2-43f7-9ff5-138b1a90b703/48',desc:'Trade Desk\'s deal creation API was rejecting PG deals whose flight start date fell in the future, causing an InvalidDealCreation error during sync. The fix correctly handles future-dated flights without triggering the rejection.',priority:'Normal',url:'https://perion.atlassian.net/browse/HSSP-4648'},
+  'HSSP-4456': {type:'Bug',summary:'Auction Maps Openings Using Wrong Deal ID (eSSP → eCDN)',status:'In UAT',assignee:'Andrei Lazakovitch',avatar:'https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/62cc2344078104d0866ca27b/79279ab2-e2e5-4258-b901-14429ffc66b2/48',desc:'Bid requests from external SSP through curate to external DSP stopped delivering in staging. The auction post-processor was mapping to the bid group using the curated deal ID instead of the eSSP request deal ID.',priority:'Normal',url:'https://perion.atlassian.net/browse/HSSP-4456'},
+  'HSSP-4178': {type:'Story',summary:'Apiary/Platform Facade for External Exchange Settings',status:'In UAT',assignee:'Ruben Buelvas',avatar:'https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/712020:816ea750-4909-44e1-b65b-f6230e4ca8c4/f90971a4-177a-4e1b-8a70-6e5ca5e82d80/48',desc:'Creates a facade layer so hs-apiary no longer knows about the concept of external exchanges — only DSPs. Exports exchange settings per DSP instead of per external exchange to simplify the eventual decommission of external exchanges.',priority:'Normal',url:'https://perion.atlassian.net/browse/HSSP-4178'},
+  'HSSP-4272': {type:'Story',summary:'Build Appcelerate DSP Integration',status:'Done',assignee:'Varun Hooda',avatar:'https://secure.gravatar.com/avatar/95726aaadf3ba4622b1d4cc8733bbaca?d=https%3A%2F%2Favatar-management--avatars.us-west-2.prod.public.atl-paas.net%2Finitials%2FVH-2.png',desc:'Full DSP integration for Appcelerate — a new demand partner. Covers bid request/response handling, creative format support, endpoint configuration, and production validation.',priority:'Normal',url:'https://perion.atlassian.net/browse/HSSP-4272'},
+  'HSSP-4373': {type:'Story',summary:'Build the Eskimi DSP Integration',status:'In Progress',assignee:'Alex Tomkins',avatar:'https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/6369390c96243ac755edc8c9/d3ab0029-1352-40ff-a200-b9b7eb16282d/48',desc:'Full DSP integration for Eskimi — covering EU (rtb-eu-1.eskimi.com/perion) and Asia (rtb-asia-1.eskimi.com/perion) endpoints, currency conversion to USD, bid request/response handling, and creative format validation.',priority:'Normal',url:'https://perion.atlassian.net/browse/HSSP-4373'},
+  'HSSP-4209': {type:'Story',summary:'SSP: Flexible Rate Card Pricing',status:'In Review',assignee:'Nathan Chao',avatar:'https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/5d6fd099522f790d9c77292f/86b38c6d-2583-40ef-8351-5b88f08c0a3f/48',desc:'Let publishers set a % discount or markup on rate card deals instead of manually configuring a unique price per deal. Reduces the number of deals publishers need to manage at scale.',priority:'Normal',url:'https://perion.atlassian.net/browse/HSSP-4209'},
+  'HSSP-4308': {type:'Story',summary:'Buyer Inventory Packs Controlled via Org Setting',status:'In UAT',assignee:'Spencer Kifell',avatar:'https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/712020:d6fbad83-c1e2-41c5-b187-a9040a3b42a5/c538b162-2eaa-4705-ae6d-ba378b11d071/48',desc:'Buyer packs are hidden behind an org-level feature flag, off by default. Allows controlled rollout without exposing the feature to all buyer organizations at once.',priority:'Normal',url:'https://perion.atlassian.net/browse/HSSP-4308'},
+  'HSSP-4190': {type:'Story',summary:'Trade Desk Deal Sync: Troubleshooting Tools in Admin Console',status:'In UAT',assignee:'Ruben Buelvas',avatar:'https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/712020:816ea750-4909-44e1-b65b-f6230e4ca8c4/f90971a4-177a-4e1b-8a70-6e5ca5e82d80/48',desc:'Lets internal teams independently troubleshoot Trade Desk deal sync issues directly from the admin console (SGC): view past sync runs, inspect errors, manually re-trigger syncs, and check raw TTD deal data.',priority:'High',url:'https://perion.atlassian.net/browse/HSSP-4190'},
+  'HSSP-4291': {type:'Story',summary:'Transactional Emails Updated to @perion.com',status:'In Staging',assignee:'Adrien D. Ahlqvist',avatar:'https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/5fb94389cbead5006908d4ba/2ed3317b-2891-4b42-82b3-ae5054efaf6d/48',desc:'Support and no-reply transactional emails were still sending from @hivestack.com addresses. Updated all outbound notification emails to use @perion.com.',priority:'Low',url:'https://perion.atlassian.net/browse/HSSP-4291'},
+  'HSSP-3697': {type:'Bug',summary:'Fix: Spend Split on External DSP Deals Ignored Priority Weight',status:'Done',assignee:'Alex Tomkins',avatar:'https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/6369390c96243ac755edc8c9/d3ab0029-1352-40ff-a200-b9b7eb16282d/48',desc:'When a deal used priority steering, delivery on external DSP deals was allocating at the configured percentage rather than the relative weight across dimensions — meaning lower-priority placements could never catch up if they fell behind.',priority:'Low',url:'https://perion.atlassian.net/browse/HSSP-3697'},
+  'HSSP-4008': {type:'Story',summary:'Deal API: Core Endpoints for Deal Creation',status:'Done',assignee:'Varun Hooda',avatar:'https://secure.gravatar.com/avatar/95726aaadf3ba4622b1d4cc8733bbaca?d=https%3A%2F%2Favatar-management--avatars.us-west-2.prod.public.atl-paas.net%2Finitials%2FVH-2.png',desc:'Foundation API endpoints required before the full SSP Deal API can be built — covering the core create/read operations that downstream deal management features depend on.',priority:'Normal',url:'https://perion.atlassian.net/browse/HSSP-4008'},
+  'HSSP-4235': {type:'Story',summary:'Curators & Buyers Can Now Target with Their Own Screen Packs',status:'Done',assignee:'Christian Thibeault',avatar:'https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/712020:aecc67a7-3f02-45e0-87bb-6e10f7d9307d/7591fbab-5b55-4b8c-81d6-b0c436f2a3e7/48',desc:'Screen packs previously only worked for publisher (supply) organizations. Curators and buyers can now build and use their own inventory packs for deal targeting, unlocking the full Marketplace Rules workflow.',priority:'Normal',url:'https://perion.atlassian.net/browse/HSSP-4235'},
+  'HSSP-4451': {type:'Story',summary:'DSP Integrations: Compress Bid Requests for Faster Delivery',status:'Done',assignee:'Mickael Maitre',avatar:'',desc:'Bid requests sent to DSP partners are now gzip-compressed, reducing payload size and network overhead. Cuts bandwidth costs and speeds up auction round-trips between our exchange and demand partners.',priority:'Normal',url:'https://perion.atlassian.net/browse/HSSP-4451'},
+  'HSSP-3974': {type:'Story',summary:'Screen Page: See Deals & Line Items Targeting a Unit',status:'Done',assignee:'Spencer Kifell',avatar:'https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/712020:d6fbad83-c1e2-41c5-b187-a9040a3b42a5/c538b162-2eaa-4705-ae6d-ba378b11d071/48',desc:'Adds two collapsible table sections to the Unit Details (screen) page — one showing deals targeting the unit and one showing active line items. Data loads lazily on expand to preserve page load performance. Publishers can filter by status to see all active or historical campaigns on their inventory.',priority:'High',url:'https://perion.atlassian.net/browse/HSSP-3974'},
+  'HSSP-3793': {type:'Story',summary:'Trade Desk: Sync Programmatic Guaranteed Deals',status:'Done',assignee:'Pascal-Alexandre Morel',avatar:'https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/60e3264b471e61006a304f47/7058477c-03d2-43f7-9ff5-138b1a90b703/48',desc:'Extended the Trade Desk deal sync to include PG (Programmatic Guaranteed) deals. Previously only NG and CD deal types were pushed to TTD via the new PDP API.',priority:'Normal',url:'https://perion.atlassian.net/browse/HSSP-3793'},
+  'HSSP-4084': {type:'Story',summary:'DV360: Better Geo Targeting via Screen IP Address',status:'Done',assignee:'Nathan Chao',avatar:'https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/5d6fd099522f790d9c77292f/86b38c6d-2583-40ef-8351-5b88f08c0a3f/48',desc:'Follow-up improvements to IP-based geo targeting for DV360. Ensures screen IP is correctly forwarded in bid requests so DV360 buyers can apply location targeting.',priority:'Normal',url:'https://perion.atlassian.net/browse/HSSP-4084'},
+  'HSSP-4081': {type:'Spike',summary:'Pacing for Curated Deals: Scoping & Estimates',status:'Done',assignee:'Alex Tomkins',avatar:'https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/6369390c96243ac755edc8c9/d3ab0029-1352-40ff-a200-b9b7eb16282d/48',desc:'Technical scoping spike for adding delivery pacing to Curated Deals. Estimated work across pacing curve generation, campaign-level controls, and the CD bid filter layer.',priority:'Normal',url:'https://perion.atlassian.net/browse/HSSP-4081'},
+  'HSSP-4265': {type:'Bug',summary:'Fix: Trade Desk Deal Sync Lambda Stopped Creating Deals',status:'Done',assignee:'Pascal-Alexandre Morel',avatar:'https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/60e3264b471e61006a304f47/7058477c-03d2-43f7-9ff5-138b1a90b703/48',desc:'A bug in the TTD deal sync Lambda caused deals to never reach "created" state. Traced to the LAMBDAS-DK8 Sentry error in the EPA Deal Sync service.',priority:'Normal',url:'https://perion.atlassian.net/browse/HSSP-4265'},
+  'HSSP-4011': {type:'Story',summary:'Deal API: Developer Documentation',status:'Done',assignee:'Varun Hooda',avatar:'https://secure.gravatar.com/avatar/95726aaadf3ba4622b1d4cc8733bbaca?d=https%3A%2F%2Favatar-management--avatars.us-west-2.prod.public.atl-paas.net%2Finitials%2FVH-2.png',desc:'Written documentation for the SSP Deal API — covering endpoint specs, authentication, request/response formats, and usage examples for integrating partners.',priority:'Normal',url:'https://perion.atlassian.net/browse/HSSP-4011'},
+  'HSSP-4117': {type:'Story',summary:'Screen Packs: Pre-selection Defaults & Custom Pack IDs',status:'Done',assignee:'Christian Thibeault',avatar:'https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/712020:aecc67a7-3f02-45e0-87bb-6e10f7d9307d/7591fbab-5b55-4b8c-81d6-b0c436f2a3e7/48',desc:'Adds a "prepopulation option" to inventory packs so deals can auto-include or auto-exclude a pack by default. Also adds an optional external Pack ID field for mapping packs to external systems like DV360.',priority:'Normal',url:'https://perion.atlassian.net/browse/HSSP-4117'},
+  'HSSP-4221': {type:'Bug',summary:'Fix: Trade Desk Deals Fail for Valid Buyer Accounts',status:'Done',assignee:'Pascal-Alexandre Morel',avatar:'https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/60e3264b471e61006a304f47/7058477c-03d2-43f7-9ff5-138b1a90b703/48',desc:'Deal creation was failing for valid buyers because the TTD known-agent validation was rejecting empty (but valid) responses from the TTD API. Relaxed the check to allow deals to proceed.',priority:'Normal',url:'https://perion.atlassian.net/browse/HSSP-4221'},
+  'HSSP-4228': {type:'Bug',summary:'Fix: Crash When Trade Desk Returns Empty Flight Data',status:'Done',assignee:'Pascal-Alexandre Morel',avatar:'https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/60e3264b471e61006a304f47/7058477c-03d2-43f7-9ff5-138b1a90b703/48',desc:'A null flight object returned by the Trade Desk API caused an unhandled NullPointerException in the deal sync Lambda, crashing the sync process for affected deals.',priority:'Normal',url:'https://perion.atlassian.net/browse/HSSP-4228'},
+  'HSSP-4120': {type:'Story',summary:'Buyers Can Create & Manage Their Own Inventory Packs',status:'Done',assignee:'Christian Thibeault',avatar:'https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/712020:aecc67a7-3f02-45e0-87bb-6e10f7d9307d/7591fbab-5b55-4b8c-81d6-b0c436f2a3e7/48',desc:'Extends marketplace rules (screen packs) to buyers — they can now create and edit their own inventory packs for eventual line-item targeting, with appropriate permission controls.',priority:'Normal',url:'https://perion.atlassian.net/browse/HSSP-4120'},
+  'HSSP-4118': {type:'Story',summary:'Curators Can Create & Manage Their Own Inventory Packs',status:'Done',assignee:'Christian Thibeault',avatar:'https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/712020:aecc67a7-3f02-45e0-87bb-6e10f7d9307d/7591fbab-5b55-4b8c-81d6-b0c436f2a3e7/48',desc:'Screen packs were previously restricted to publisher orgs. Curators with the right permission can now create and manage their own inventory packs (Marketplace Rules) for use in curated deals.',priority:'Normal',url:'https://perion.atlassian.net/browse/HSSP-4118'},
+  'HSSP-4079': {type:'Bug',summary:'Fix: Trade Desk Deal Sync Down in Japan',status:'Done',assignee:'Pascal-Alexandre Morel',avatar:'https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/60e3264b471e61006a304f47/7058477c-03d2-43f7-9ff5-138b1a90b703/48',desc:'TTD deal sync was failing silently in Japan because the EPA and PDP services shared authentication credentials in that region, causing all deal sync attempts to fail.',priority:'Normal',url:'https://perion.atlassian.net/browse/HSSP-4079'},
+  'HSSP-4182': {type:'Bug',summary:'Fix: Duplicated PG Deals Showing as Canceled on Trade Desk',status:'Done',assignee:'Pascal-Alexandre Morel',avatar:'https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/60e3264b471e61006a304f47/7058477c-03d2-43f7-9ff5-138b1a90b703/48',desc:'Users duplicating an existing PG deal found the new line item showing as "Canceled" on TTD. The deal status was not being correctly propagated when deals were cloned.',priority:'Normal',url:'https://perion.atlassian.net/browse/HSSP-4182'},
+  'HSSP-4197': {type:'Story',summary:'Trade Desk Deal Sync: Monitoring & Alerting',status:'Done',assignee:'Pascal-Alexandre Morel',avatar:'https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/60e3264b471e61006a304f47/7058477c-03d2-43f7-9ff5-138b1a90b703/48',desc:'Adds CloudWatch dashboards, alarms, and error alerting for the TTD deal sync pipeline so the team can catch and react to failures before they impact customers.',priority:'Normal',url:'https://perion.atlassian.net/browse/HSSP-4197'},
+  'HSSP-3774': {type:'Story',summary:'Automated Test Coverage: Cross-SSP Curation (Phase 4)',status:'Done',assignee:'Erik Blair',avatar:'https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/6266eb6ffff19d0069262ef0/492cb37a-7244-47a5-aa9e-207671af6696/48',desc:'End-to-end automated test suite for Cross-SSP Curation Phase 4, covering the full flow of curated deals targeting inventory across multiple SSPs.',priority:'Normal',url:'https://perion.atlassian.net/browse/HSSP-3774'},
+  'HSSP-4046': {type:'Bug',summary:'Fix: Deal Simulator Broken for Mime Type Tests',status:'Done',assignee:'Christian Thibeault',avatar:'https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/712020:aecc67a7-3f02-45e0-87bb-6e10f7d9307d/7591fbab-5b55-4b8c-81d6-b0c436f2a3e7/48',desc:'After an update, the deal simulator stopped forwarding mime types in bid requests, breaking E2E tests that relied on that behavior for creative format validation.',priority:'Normal',url:'https://perion.atlassian.net/browse/HSSP-4046'},
+  'HSSP-3917': {type:'Bug',summary:'Fix: Buyers Can Now Filter Reports by Curated Deal',status:'Done',assignee:'Chandru Thimmampatti Ganesan',avatar:'https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/5e6fde76aab8250c443e2a25/3951b745-9bfe-4e4f-b124-d23862b7378a/48',desc:'Buyers creating or editing report definitions had no way to filter by curated deals. The Deal and Deal ID filter showed no curated deal options, leaving buyers unable to report on their curated inventory.',priority:'Normal',url:'https://perion.atlassian.net/browse/HSSP-3917'},
+  'HSSP-3961': {type:'Story',summary:'Send Screen Location to DV360 via IP for Geo Targeting',status:'Done',assignee:'Andrei Lazakovitch',avatar:'https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/62cc2344078104d0866ca27b/79279ab2-e2e5-4258-b901-14429ffc66b2/48',desc:'DV360 can\'t apply geo targeting using standard OpenRTB geo fields — it relies on IP-based location. Forwards the screen\'s IP address in bid requests so DV360 buyers can geo-target DOOH inventory.',priority:'Normal',url:'https://perion.atlassian.net/browse/HSSP-3961'},
+  'HSSP-3491': {type:'Bug',summary:'Fix: Creative Review Notification Emails Display Correctly',status:'Done',assignee:'Varun Hooda',avatar:'https://secure.gravatar.com/avatar/95726aaadf3ba4622b1d4cc8733bbaca?d=https%3A%2F%2Favatar-management--avatars.us-west-2.prod.public.atl-paas.net%2Finitials%2FVH-2.png',desc:'Batched creative review emails had a broken layout — creative items were rendering at incorrect widths due to a CSS issue in the new email template.',priority:'Normal',url:'https://perion.atlassian.net/browse/HSSP-3491'},
+  'HSSP-2252': {type:'Bug',summary:'Fix: Curated Deal Pages No Longer Crash on Load',status:'Done',assignee:'Chandru Thimmampatti Ganesan',avatar:'https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/5e6fde76aab8250c443e2a25/3951b745-9bfe-4e4f-b124-d23862b7378a/48',desc:'Certain curated deal detail pages were returning a blank page with an error. Traced to a data edge case in the frontend rendering pipeline.',priority:'Normal',url:'https://perion.atlassian.net/browse/HSSP-2252'},
+  'HSSP-2695': {type:'Story',summary:'Markup Chart Added to Curated Deal Pages',status:'Done',assignee:'Spencer Kifell',avatar:'https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/712020:d6fbad83-c1e2-41c5-b187-a9040a3b42a5/c538b162-2eaa-4705-ae6d-ba378b11d071/48',desc:'Adds a visual markup graph to Curated Deal detail pages, giving publishers and curators a clear view of deal economics — how markup is applied relative to floor price over time.',priority:'Normal',url:'https://perion.atlassian.net/browse/HSSP-2695'},
+  'HSSP-1964': {type:'Story',summary:'Support HTML Creatives from Programmatic Bids',status:'Done',assignee:'Andrei Lazakovitch',avatar:'https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/62cc2344078104d0866ca27b/79279ab2-e2e5-4258-b901-14429ffc66b2/48',desc:'Adds support for HTML creative files in bid responses. The ad server now declares HTML support in bid requests and fetches/plays HTML creatives when returned by demand partners.',priority:'Normal',url:'https://perion.atlassian.net/browse/HSSP-1964'},
+  'HSSP-1965': {type:'Story',summary:'Support ZIP Creatives from Programmatic Bids',status:'Done',assignee:'Andrei Lazakovitch',avatar:'https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/62cc2344078104d0866ca27b/79279ab2-e2e5-4258-b901-14429ffc66b2/48',desc:'Adds support for ZIP creative files in bid responses. The ad server now declares ZIP support in bid requests and fetches/plays ZIP creatives when returned by demand partners.',priority:'Normal',url:'https://perion.atlassian.net/browse/HSSP-1965'},
+};
+const EPICS  = {
+  'HSSP-3942': {name:'SSP – Deal Price Flexibility',pct:95,color:'#22c55e',start:'Apr 1',end:'May 31',startRaw:'2026-04-01',endRaw:'2026-05-31',frac:'1/1 issues',desc:'Track all deal price-related changes for SSP, including rate card flexibility, discounts, markups, and price floor controls.',url:'https://perion.atlassian.net/browse/HSSP-3942'},
+  'HSSP-4071': {name:'Marketplace – TTD Bid Expiration',pct:95,color:'#22c55e',start:'May 1',end:'Jun 30',startRaw:'2026-05-01',endRaw:'2026-06-30',frac:'1/1 issues',desc:'Handle TTD bid expiration: TTD will not pay if the play confirmation happens after their acceptance window (as expressed in the bid response). Solution computes the expected time between bid response and playout (averaged over the last week), validates against TTD\'s accepted threshold, and discards the bid response if our expiration average exceeds their limit.',url:'https://perion.atlassian.net/browse/HSSP-4071'},
+  'HSSP-4370': {name:'Marketplace – Greenbids Traffic Shaper',pct:75,color:'#f59e0b',start:'May 1',end:'Jun 30',startRaw:'2026-05-01',endRaw:'2026-06-30',frac:'1+1▸/2 issues',desc:'Integrate Greenbids traffic shaping to reduce bid request volume and optimise SSP performance with ML-based filtering.',url:'https://perion.atlassian.net/browse/HSSP-4370'},
+  'HSSP-3944': {name:'Curate – Curator & Buyer Packs',pct:62,color:'#f59e0b',start:'Apr 1',end:'May 31',startRaw:'2026-04-01',endRaw:'2026-05-31',frac:'8/13 issues',desc:'Full Marketplace Rules feature: curators and buyers create, manage, and target inventory packs. Includes dashboard, targeting map, and default pre-selection controls.',url:'https://perion.atlassian.net/browse/HSSP-3944'},
+  'HSSP-4035': {name:'Curate – Pacing CD',pct:60,color:'#f59e0b',start:'Apr 1',end:'Jun 30',startRaw:'2026-04-01',endRaw:'2026-06-30',frac:'11+3▸/21 issues',desc:'Add pacing support to Curated Deals, including pacing curves, CD-level budget controls, and delivery monitoring.',url:'https://perion.atlassian.net/browse/HSSP-4035'},
+  'HSSP-3904': {name:'SSP – Deal API',pct:58,color:'#f59e0b',start:'Jan 1',end:'Jun 30',startRaw:'2026-01-01',endRaw:'2026-06-30',frac:'3+1▸/6 pts',desc:'Build out the SSP Deal API — public-facing endpoints for creating, editing, and managing programmatic deals.',url:'https://perion.atlassian.net/browse/HSSP-3904'},
+  'HSSP-4205': {name:'Marketplace – Eskimi DSP Integration',pct:50,color:'#f59e0b',start:'May 1',end:'May 31',startRaw:'2026-05-01',endRaw:'2026-05-31',frac:'0+1▸/1 issues',desc:'Integrate the Eskimi DSP — a programmatic DOOH platform with EU (rtb-eu-1.eskimi.com/perion) and Asia (rtb-asia-1.eskimi.com/perion) endpoints. Covers bid request/response implementation, currency conversion to USD, creative format support, and production validation.',url:'https://perion.atlassian.net/browse/HSSP-4205'},
+  'HSSP-2816': {name:'SSP – Cross SSP Curation Follow-ups',pct:40,color:'#3b82f6',start:'Jul 1',end:'Jul 30',startRaw:'2026-07-01',endRaw:'2026-07-30',frac:'2/5 pts',desc:'Follow-up improvements to Cross SSP Curation features from previous phases, including bug fixes and edge cases.',url:'https://perion.atlassian.net/browse/HSSP-2816'},
+  'HSSP-4034': {name:'Curate – Dayparting',pct:25,color:'#3b82f6',start:'May 1',end:'Jun 30',startRaw:'2026-05-01',endRaw:'2026-06-30',frac:'0+2▸/4 issues',desc:'Add dayparting support to Curated Deals — allow deals to run only during specific hours or days of the week.',url:'https://perion.atlassian.net/browse/HSSP-4034'},
+  'HSSP-3349': {name:'Curate – Event Targeting',pct:20,color:'#3b82f6',start:'May 1',end:'Jun 30',startRaw:'2026-05-01',endRaw:'2026-06-30',frac:'0+2▸/5 issues',desc:'Add event-based targeting to Curated Deals — enable deals to target inventory around live events.',url:'https://perion.atlassian.net/browse/HSSP-3349'},
+  'HSSP-3953': {name:'Go Migration – DSP Integrations',pct:3,color:'#3b82f6',start:'Jul 1',end:'Sep 30',startRaw:'2026-07-01',endRaw:'2026-09-30',frac:'1/29 issues',desc:'Migrate all active DSP integrations from hs-openrtb (Python) to hs-apiary (Go) using the DefaultDSPManager pattern. 21 DSPs prioritized by ascending combined revenue — lowest-spend migrated first to minimize blast radius. DV360 RTB ($4.5M) and TTD ($7.4M) are intentionally last. No-spend DSPs migrated via hard fork (skip split mode). 1/29 issues complete.',url:'https://perion.atlassian.net/browse/HSSP-3953'},
+  'HSSP-4631': {name:'Curate – Markup Reporting',pct:0,color:'#3b82f6',start:'Jul 1',end:'Sep 30',startRaw:'2026-07-01',endRaw:'2026-09-30',frac:'0/0 issues',desc:'Surface markup information across three key surfaces: the Curated Deal detail page, the Reporting module, and the main Curator Dashboard — giving curators clear visibility into how markup is applied across their inventory.',url:'https://perion.atlassian.net/browse/HSSP-4631'},
+  'HSSP-4352': {name:'Marketplace – Ad Req/Res Reporting',pct:0,color:'#3b82f6',start:'Jul 1',end:'Sep 29',startRaw:'2026-07-01',endRaw:'2026-09-29',frac:'0/0 issues',desc:'Extend the bidding activity graph with ad request and ad response data, including bid expiry. Full funnel: Ad Req → Bid Req → Bid Res (Valid / No Bid / Invalid by loss reason & error code) → Ad Res (Play / Expiry).',url:'https://perion.atlassian.net/browse/HSSP-4352'},
+  'HSSP-1014': {name:'Marketplace – Loss Reasons Reporting',pct:0,color:'#3b82f6',start:'Apr 1',end:'Jun 30',startRaw:'2026-04-01',endRaw:'2026-06-30',frac:'0/1 pts',desc:'Build loss reason reporting for the Marketplace — surface why bids were lost to help publishers and curators optimise.',url:'https://perion.atlassian.net/browse/HSSP-1014'},
+  'HSSP-4403': {name:'SSP – hs-openrtb Scalability Fixes',pct:100,color:'#22c55e',start:'',end:'',frac:'Done',desc:'Grouped fixes for a production incident where 3 curated deals spiked hs-openrtb load. Covered Datadog metric sampling, low-spend DSP throttling, Kafka batch sizing, valid bid metric fix, and exception-based control flow cleanup.',url:'https://perion.atlassian.net/browse/HSSP-4403'},
+};
+
+const SHIPPED_HTML = {
+  weekly: `<div class="issue-row" data-key="HSSP-4194" onmouseenter="showCard(event,'HSSP-4194')" onmouseleave="hideCard()" onclick="openIssueModal('HSSP-4194')"><div class="issue-left"><svg width="13" height="13" viewBox="0 0 13 13" style="flex-shrink:0;margin-top:2px"><rect width="13" height="13" rx="2" fill="#22c55e"/></svg><a href="https://perion.atlassian.net/browse/HSSP-4194" target="_blank" class="issue-key" onclick="event.stopPropagation()" onmouseenter="event.stopPropagation()">HSSP-4194</a></div><div class="issue-body"><div class="issue-summary">Curators Can Create &amp; Edit Marketplace Rules</div><div class="issue-meta"><span class="badge-status badge-done">Done</span></div></div></div><div class="issue-row" data-key="HSSP-4196" onmouseenter="showCard(event,'HSSP-4196')" onmouseleave="hideCard()" onclick="openIssueModal('HSSP-4196')"><div class="issue-left"><svg width="13" height="13" viewBox="0 0 13 13" style="flex-shrink:0;margin-top:2px"><rect width="13" height="13" rx="2" fill="#22c55e"/></svg><a href="https://perion.atlassian.net/browse/HSSP-4196" target="_blank" class="issue-key" onclick="event.stopPropagation()" onmouseenter="event.stopPropagation()">HSSP-4196</a></div><div class="issue-body"><div class="issue-summary">Curators Get a Marketplace Rules Dashboard</div><div class="issue-meta"><span class="badge-status badge-done">Done</span></div></div></div><div class="issue-row" data-key="HSSP-4195" onmouseenter="showCard(event,'HSSP-4195')" onmouseleave="hideCard()" onclick="openIssueModal('HSSP-4195')"><div class="issue-left"><svg width="13" height="13" viewBox="0 0 13 13" style="flex-shrink:0;margin-top:2px"><rect width="13" height="13" rx="2" fill="#22c55e"/></svg><a href="https://perion.atlassian.net/browse/HSSP-4195" target="_blank" class="issue-key" onclick="event.stopPropagation()" onmouseenter="event.stopPropagation()">HSSP-4195</a></div><div class="issue-body"><div class="issue-summary">Marketplace Rules Appear on Deal Targeting Map</div><div class="issue-meta"><span class="badge-status badge-done">Done</span></div></div></div><div class="issue-row" data-key="HSSP-4422" onmouseenter="showCard(event,'HSSP-4422')" onmouseleave="hideCard()" onclick="openIssueModal('HSSP-4422')"><div class="issue-left"><svg width="13" height="13" viewBox="0 0 13 13" style="flex-shrink:0;margin-top:2px"><rect width="13" height="13" rx="2" fill="#3b82f6"/></svg><a href="https://perion.atlassian.net/browse/HSSP-4422" target="_blank" class="issue-key" onclick="event.stopPropagation()" onmouseenter="event.stopPropagation()">HSSP-4422</a></div><div class="issue-body"><div class="issue-summary">Remove Appcelerate DSP Integration</div><div class="issue-meta"><span class="badge-status badge-done">Done</span></div></div></div><div class="issue-row" data-key="HSSP-4008" onmouseenter="showCard(event,'HSSP-4008')" onmouseleave="hideCard()" onclick="openIssueModal('HSSP-4008')"><div class="issue-left"><svg width="13" height="13" viewBox="0 0 13 13" style="flex-shrink:0;margin-top:2px"><rect width="13" height="13" rx="2" fill="#22c55e"/></svg><a href="https://perion.atlassian.net/browse/HSSP-4008" target="_blank" class="issue-key" onclick="event.stopPropagation()" onmouseenter="event.stopPropagation()">HSSP-4008</a></div><div class="issue-body"><div class="issue-summary">Deal API: Core Endpoints for Deal Creation</div><div class="issue-meta"><span class="badge-status badge-done">Done</span></div></div></div><div class="issue-row" data-key="HSSP-4425" onmouseenter="showCard(event,'HSSP-4425')" onmouseleave="hideCard()" onclick="openIssueModal('HSSP-4425')"><div class="issue-left"><svg width="13" height="13" viewBox="0 0 13 13" style="flex-shrink:0;margin-top:2px"><rect width="13" height="13" rx="2" fill="#3b82f6"/></svg><a href="https://perion.atlassian.net/browse/HSSP-4425" target="_blank" class="issue-key" onclick="event.stopPropagation()" onmouseenter="event.stopPropagation()">HSSP-4425</a></div><div class="issue-body"><div class="issue-summary">Pacing CD: Switch On the Pacing Curve Generator</div><div class="issue-meta"><span class="badge-status badge-done">Done</span></div></div></div><div class="issue-row" data-key="HSSP-4444" onmouseenter="showCard(event,'HSSP-4444')" onmouseleave="hideCard()" onclick="openIssueModal('HSSP-4444')"><div class="issue-left"><svg width="13" height="13" viewBox="0 0 13 13" style="flex-shrink:0;margin-top:2px"><rect width="13" height="13" rx="2" fill="#3b82f6"/></svg><a href="https://perion.atlassian.net/browse/HSSP-4444" target="_blank" class="issue-key" onclick="event.stopPropagation()" onmouseenter="event.stopPropagation()">HSSP-4444</a></div><div class="issue-body"><div class="issue-summary">TTD PG Deals: Raise Bid Rate to 95%</div><div class="issue-meta"><span class="badge-status badge-done">Done</span><span class="badge-high">High</span></div></div></div><div class="issue-row" data-key="HSSP-4446" onmouseenter="showCard(event,'HSSP-4446')" onmouseleave="hideCard()" onclick="openIssueModal('HSSP-4446')"><div class="issue-left"><svg width="13" height="13" viewBox="0 0 13 13" style="flex-shrink:0;margin-top:2px"><rect width="13" height="13" rx="2" fill="#3b82f6"/></svg><a href="https://perion.atlassian.net/browse/HSSP-4446" target="_blank" class="issue-key" onclick="event.stopPropagation()" onmouseenter="event.stopPropagation()">HSSP-4446</a></div><div class="issue-body"><div class="issue-summary">TTD PG Deals: Backfill Existing Deals to 95% Bid Rate</div><div class="issue-meta"><span class="badge-status badge-done">Done</span></div></div></div><div class="issue-row" data-key="HSSP-4437" onmouseenter="showCard(event,'HSSP-4437')" onmouseleave="hideCard()" onclick="openIssueModal('HSSP-4437')"><div class="issue-left"><svg width="13" height="13" viewBox="0 0 13 13" style="flex-shrink:0;margin-top:2px"><circle cx="6.5" cy="6.5" r="6.5" fill="#ef4444"/></svg><a href="https://perion.atlassian.net/browse/HSSP-4437" target="_blank" class="issue-key" onclick="event.stopPropagation()" onmouseenter="event.stopPropagation()">HSSP-4437</a></div><div class="issue-body"><div class="issue-summary">Fix: Budget Min/Max Missing from Curated Deal API</div><div class="issue-meta"><span class="badge-status badge-done">Done</span></div></div></div>`,
+  biweekly: `<div class="issue-row" data-key="HSSP-4194" onmouseenter="showCard(event,'HSSP-4194')" onmouseleave="hideCard()" onclick="openIssueModal('HSSP-4194')"><div class="issue-left"><svg width="13" height="13" viewBox="0 0 13 13" style="flex-shrink:0;margin-top:2px"><rect width="13" height="13" rx="2" fill="#22c55e"/></svg><a href="https://perion.atlassian.net/browse/HSSP-4194" target="_blank" class="issue-key" onclick="event.stopPropagation()" onmouseenter="event.stopPropagation()">HSSP-4194</a></div><div class="issue-body"><div class="issue-summary">Curators Can Create &amp; Edit Marketplace Rules</div><div class="issue-meta"><span class="badge-status badge-done">Done</span></div></div></div><div class="issue-row" data-key="HSSP-4196" onmouseenter="showCard(event,'HSSP-4196')" onmouseleave="hideCard()" onclick="openIssueModal('HSSP-4196')"><div class="issue-left"><svg width="13" height="13" viewBox="0 0 13 13" style="flex-shrink:0;margin-top:2px"><rect width="13" height="13" rx="2" fill="#22c55e"/></svg><a href="https://perion.atlassian.net/browse/HSSP-4196" target="_blank" class="issue-key" onclick="event.stopPropagation()" onmouseenter="event.stopPropagation()">HSSP-4196</a></div><div class="issue-body"><div class="issue-summary">Curators Get a Marketplace Rules Dashboard</div><div class="issue-meta"><span class="badge-status badge-done">Done</span></div></div></div><div class="issue-row" data-key="HSSP-4195" onmouseenter="showCard(event,'HSSP-4195')" onmouseleave="hideCard()" onclick="openIssueModal('HSSP-4195')"><div class="issue-left"><svg width="13" height="13" viewBox="0 0 13 13" style="flex-shrink:0;margin-top:2px"><rect width="13" height="13" rx="2" fill="#22c55e"/></svg><a href="https://perion.atlassian.net/browse/HSSP-4195" target="_blank" class="issue-key" onclick="event.stopPropagation()" onmouseenter="event.stopPropagation()">HSSP-4195</a></div><div class="issue-body"><div class="issue-summary">Marketplace Rules Appear on Deal Targeting Map</div><div class="issue-meta"><span class="badge-status badge-done">Done</span></div></div></div><div class="issue-row" data-key="HSSP-4422" onmouseenter="showCard(event,'HSSP-4422')" onmouseleave="hideCard()" onclick="openIssueModal('HSSP-4422')"><div class="issue-left"><svg width="13" height="13" viewBox="0 0 13 13" style="flex-shrink:0;margin-top:2px"><rect width="13" height="13" rx="2" fill="#3b82f6"/></svg><a href="https://perion.atlassian.net/browse/HSSP-4422" target="_blank" class="issue-key" onclick="event.stopPropagation()" onmouseenter="event.stopPropagation()">HSSP-4422</a></div><div class="issue-body"><div class="issue-summary">Remove Appcelerate DSP Integration</div><div class="issue-meta"><span class="badge-status badge-done">Done</span></div></div></div><div class="issue-row" data-key="HSSP-4008" onmouseenter="showCard(event,'HSSP-4008')" onmouseleave="hideCard()" onclick="openIssueModal('HSSP-4008')"><div class="issue-left"><svg width="13" height="13" viewBox="0 0 13 13" style="flex-shrink:0;margin-top:2px"><rect width="13" height="13" rx="2" fill="#22c55e"/></svg><a href="https://perion.atlassian.net/browse/HSSP-4008" target="_blank" class="issue-key" onclick="event.stopPropagation()" onmouseenter="event.stopPropagation()">HSSP-4008</a></div><div class="issue-body"><div class="issue-summary">Deal API: Core Endpoints for Deal Creation</div><div class="issue-meta"><span class="badge-status badge-done">Done</span></div></div></div><div class="issue-row" data-key="HSSP-4425" onmouseenter="showCard(event,'HSSP-4425')" onmouseleave="hideCard()" onclick="openIssueModal('HSSP-4425')"><div class="issue-left"><svg width="13" height="13" viewBox="0 0 13 13" style="flex-shrink:0;margin-top:2px"><rect width="13" height="13" rx="2" fill="#3b82f6"/></svg><a href="https://perion.atlassian.net/browse/HSSP-4425" target="_blank" class="issue-key" onclick="event.stopPropagation()" onmouseenter="event.stopPropagation()">HSSP-4425</a></div><div class="issue-body"><div class="issue-summary">Pacing CD: Switch On the Pacing Curve Generator</div><div class="issue-meta"><span class="badge-status badge-done">Done</span></div></div></div><div class="issue-row" data-key="HSSP-4444" onmouseenter="showCard(event,'HSSP-4444')" onmouseleave="hideCard()" onclick="openIssueModal('HSSP-4444')"><div class="issue-left"><svg width="13" height="13" viewBox="0 0 13 13" style="flex-shrink:0;margin-top:2px"><rect width="13" height="13" rx="2" fill="#3b82f6"/></svg><a href="https://perion.atlassian.net/browse/HSSP-4444" target="_blank" class="issue-key" onclick="event.stopPropagation()" onmouseenter="event.stopPropagation()">HSSP-4444</a></div><div class="issue-body"><div class="issue-summary">TTD PG Deals: Raise Bid Rate to 95%</div><div class="issue-meta"><span class="badge-status badge-done">Done</span><span class="badge-high">High</span></div></div></div><div class="issue-row" data-key="HSSP-4446" onmouseenter="showCard(event,'HSSP-4446')" onmouseleave="hideCard()" onclick="openIssueModal('HSSP-4446')"><div class="issue-left"><svg width="13" height="13" viewBox="0 0 13 13" style="flex-shrink:0;margin-top:2px"><rect width="13" height="13" rx="2" fill="#3b82f6"/></svg><a href="https://perion.atlassian.net/browse/HSSP-4446" target="_blank" class="issue-key" onclick="event.stopPropagation()" onmouseenter="event.stopPropagation()">HSSP-4446</a></div><div class="issue-body"><div class="issue-summary">TTD PG Deals: Backfill Existing Deals to 95% Bid Rate</div><div class="issue-meta"><span class="badge-status badge-done">Done</span></div></div></div><div class="issue-row" data-key="HSSP-4437" onmouseenter="showCard(event,'HSSP-4437')" onmouseleave="hideCard()" onclick="openIssueModal('HSSP-4437')"><div class="issue-left"><svg width="13" height="13" viewBox="0 0 13 13" style="flex-shrink:0;margin-top:2px"><circle cx="6.5" cy="6.5" r="6.5" fill="#ef4444"/></svg><a href="https://perion.atlassian.net/browse/HSSP-4437" target="_blank" class="issue-key" onclick="event.stopPropagation()" onmouseenter="event.stopPropagation()">HSSP-4437</a></div><div class="issue-body"><div class="issue-summary">Fix: Budget Min/Max Missing from Curated Deal API</div><div class="issue-meta"><span class="badge-status badge-done">Done</span></div></div></div><div class="issue-row" data-key="HSSP-3697" onmouseenter="showCard(event,'HSSP-3697')" onmouseleave="hideCard()" onclick="openIssueModal('HSSP-3697')"><div class="issue-left"><svg width="13" height="13" viewBox="0 0 13 13" style="flex-shrink:0;margin-top:2px"><circle cx="6.5" cy="6.5" r="6.5" fill="#ef4444"/></svg><a href="https://perion.atlassian.net/browse/HSSP-3697" target="_blank" class="issue-key" onclick="event.stopPropagation()" onmouseenter="event.stopPropagation()">HSSP-3697</a></div><div class="issue-body"><div class="issue-summary">Fix: Spend Split on External DSP Deals Ignored Priority Weight</div><div class="issue-meta"><span class="badge-status badge-done">Done</span><span class="badge-low">Low</span></div></div></div>`,
+  monthly: `<div class="issue-row" data-key="HSSP-4194" onmouseenter="showCard(event,'HSSP-4194')" onmouseleave="hideCard()" onclick="openIssueModal('HSSP-4194')"><div class="issue-left"><svg width="13" height="13" viewBox="0 0 13 13" style="flex-shrink:0;margin-top:2px"><rect width="13" height="13" rx="2" fill="#22c55e"/></svg><a href="https://perion.atlassian.net/browse/HSSP-4194" target="_blank" class="issue-key" onclick="event.stopPropagation()" onmouseenter="event.stopPropagation()">HSSP-4194</a></div><div class="issue-body"><div class="issue-summary">Curators Can Create &amp; Edit Marketplace Rules</div><div class="issue-meta"><span class="badge-status badge-done">Done</span></div></div></div><div class="issue-row" data-key="HSSP-4196" onmouseenter="showCard(event,'HSSP-4196')" onmouseleave="hideCard()" onclick="openIssueModal('HSSP-4196')"><div class="issue-left"><svg width="13" height="13" viewBox="0 0 13 13" style="flex-shrink:0;margin-top:2px"><rect width="13" height="13" rx="2" fill="#22c55e"/></svg><a href="https://perion.atlassian.net/browse/HSSP-4196" target="_blank" class="issue-key" onclick="event.stopPropagation()" onmouseenter="event.stopPropagation()">HSSP-4196</a></div><div class="issue-body"><div class="issue-summary">Curators Get a Marketplace Rules Dashboard</div><div class="issue-meta"><span class="badge-status badge-done">Done</span></div></div></div><div class="issue-row" data-key="HSSP-4195" onmouseenter="showCard(event,'HSSP-4195')" onmouseleave="hideCard()" onclick="openIssueModal('HSSP-4195')"><div class="issue-left"><svg width="13" height="13" viewBox="0 0 13 13" style="flex-shrink:0;margin-top:2px"><rect width="13" height="13" rx="2" fill="#22c55e"/></svg><a href="https://perion.atlassian.net/browse/HSSP-4195" target="_blank" class="issue-key" onclick="event.stopPropagation()" onmouseenter="event.stopPropagation()">HSSP-4195</a></div><div class="issue-body"><div class="issue-summary">Marketplace Rules Appear on Deal Targeting Map</div><div class="issue-meta"><span class="badge-status badge-done">Done</span></div></div></div><div class="issue-row" data-key="HSSP-4422" onmouseenter="showCard(event,'HSSP-4422')" onmouseleave="hideCard()" onclick="openIssueModal('HSSP-4422')"><div class="issue-left"><svg width="13" height="13" viewBox="0 0 13 13" style="flex-shrink:0;margin-top:2px"><rect width="13" height="13" rx="2" fill="#3b82f6"/></svg><a href="https://perion.atlassian.net/browse/HSSP-4422" target="_blank" class="issue-key" onclick="event.stopPropagation()" onmouseenter="event.stopPropagation()">HSSP-4422</a></div><div class="issue-body"><div class="issue-summary">Remove Appcelerate DSP Integration</div><div class="issue-meta"><span class="badge-status badge-done">Done</span></div></div></div><div class="issue-row" data-key="HSSP-4008" onmouseenter="showCard(event,'HSSP-4008')" onmouseleave="hideCard()" onclick="openIssueModal('HSSP-4008')"><div class="issue-left"><svg width="13" height="13" viewBox="0 0 13 13" style="flex-shrink:0;margin-top:2px"><rect width="13" height="13" rx="2" fill="#22c55e"/></svg><a href="https://perion.atlassian.net/browse/HSSP-4008" target="_blank" class="issue-key" onclick="event.stopPropagation()" onmouseenter="event.stopPropagation()">HSSP-4008</a></div><div class="issue-body"><div class="issue-summary">Deal API: Core Endpoints for Deal Creation</div><div class="issue-meta"><span class="badge-status badge-done">Done</span></div></div></div><div class="issue-row" data-key="HSSP-4235" onmouseenter="showCard(event,'HSSP-4235')" onmouseleave="hideCard()" onclick="openIssueModal('HSSP-4235')"><div class="issue-left"><svg width="13" height="13" viewBox="0 0 13 13" style="flex-shrink:0;margin-top:2px"><rect width="13" height="13" rx="2" fill="#22c55e"/></svg><a href="https://perion.atlassian.net/browse/HSSP-4235" target="_blank" class="issue-key" onclick="event.stopPropagation()" onmouseenter="event.stopPropagation()">HSSP-4235</a></div><div class="issue-body"><div class="issue-summary">Curators &amp; Buyers Can Now Target with Their Own Screen Packs</div><div class="issue-meta"><span class="badge-status badge-done">Done</span></div></div></div><div class="issue-row" data-key="HSSP-4272" onmouseenter="showCard(event,'HSSP-4272')" onmouseleave="hideCard()" onclick="openIssueModal('HSSP-4272')"><div class="issue-left"><svg width="13" height="13" viewBox="0 0 13 13" style="flex-shrink:0;margin-top:2px"><rect width="13" height="13" rx="2" fill="#22c55e"/></svg><a href="https://perion.atlassian.net/browse/HSSP-4272" target="_blank" class="issue-key" onclick="event.stopPropagation()" onmouseenter="event.stopPropagation()">HSSP-4272</a></div><div class="issue-body"><div class="issue-summary">Build Appcelerate DSP Integration</div><div class="issue-meta"><span class="badge-status badge-done">Done</span></div></div></div><div class="issue-row" data-key="HSSP-4264" onmouseenter="showCard(event,'HSSP-4264')" onmouseleave="hideCard()" onclick="openIssueModal('HSSP-4264')"><div class="issue-left"><svg width="13" height="13" viewBox="0 0 13 13" style="flex-shrink:0;margin-top:2px"><rect width="13" height="13" rx="2" fill="#3b82f6"/></svg><a href="https://perion.atlassian.net/browse/HSSP-4264" target="_blank" class="issue-key" onclick="event.stopPropagation()" onmouseenter="event.stopPropagation()">HSSP-4264</a></div><div class="issue-body"><div class="issue-summary">Pacing CD: Package Pacing Curve Model &amp; Endpoints</div><div class="issue-meta"><span class="badge-status badge-done">Done</span></div></div></div><div class="issue-row" data-key="HSSP-4425" onmouseenter="showCard(event,'HSSP-4425')" onmouseleave="hideCard()" onclick="openIssueModal('HSSP-4425')"><div class="issue-left"><svg width="13" height="13" viewBox="0 0 13 13" style="flex-shrink:0;margin-top:2px"><rect width="13" height="13" rx="2" fill="#3b82f6"/></svg><a href="https://perion.atlassian.net/browse/HSSP-4425" target="_blank" class="issue-key" onclick="event.stopPropagation()" onmouseenter="event.stopPropagation()">HSSP-4425</a></div><div class="issue-body"><div class="issue-summary">Pacing CD: Switch On the Pacing Curve Generator</div><div class="issue-meta"><span class="badge-status badge-done">Done</span></div></div></div><div class="issue-row" data-key="HSSP-4444" onmouseenter="showCard(event,'HSSP-4444')" onmouseleave="hideCard()" onclick="openIssueModal('HSSP-4444')"><div class="issue-left"><svg width="13" height="13" viewBox="0 0 13 13" style="flex-shrink:0;margin-top:2px"><rect width="13" height="13" rx="2" fill="#3b82f6"/></svg><a href="https://perion.atlassian.net/browse/HSSP-4444" target="_blank" class="issue-key" onclick="event.stopPropagation()" onmouseenter="event.stopPropagation()">HSSP-4444</a></div><div class="issue-body"><div class="issue-summary">TTD PG Deals: Raise Bid Rate to 95%</div><div class="issue-meta"><span class="badge-status badge-done">Done</span><span class="badge-high">High</span></div></div></div><div class="issue-row" data-key="HSSP-4446" onmouseenter="showCard(event,'HSSP-4446')" onmouseleave="hideCard()" onclick="openIssueModal('HSSP-4446')"><div class="issue-left"><svg width="13" height="13" viewBox="0 0 13 13" style="flex-shrink:0;margin-top:2px"><rect width="13" height="13" rx="2" fill="#3b82f6"/></svg><a href="https://perion.atlassian.net/browse/HSSP-4446" target="_blank" class="issue-key" onclick="event.stopPropagation()" onmouseenter="event.stopPropagation()">HSSP-4446</a></div><div class="issue-body"><div class="issue-summary">TTD PG Deals: Backfill Existing Deals to 95% Bid Rate</div><div class="issue-meta"><span class="badge-status badge-done">Done</span></div></div></div><div class="issue-row" data-key="HSSP-4437" onmouseenter="showCard(event,'HSSP-4437')" onmouseleave="hideCard()" onclick="openIssueModal('HSSP-4437')"><div class="issue-left"><svg width="13" height="13" viewBox="0 0 13 13" style="flex-shrink:0;margin-top:2px"><circle cx="6.5" cy="6.5" r="6.5" fill="#ef4444"/></svg><a href="https://perion.atlassian.net/browse/HSSP-4437" target="_blank" class="issue-key" onclick="event.stopPropagation()" onmouseenter="event.stopPropagation()">HSSP-4437</a></div><div class="issue-body"><div class="issue-summary">Fix: Budget Min/Max Missing from Curated Deal API</div><div class="issue-meta"><span class="badge-status badge-done">Done</span></div></div></div><div class="issue-row" data-key="HSSP-3697" onmouseenter="showCard(event,'HSSP-3697')" onmouseleave="hideCard()" onclick="openIssueModal('HSSP-3697')"><div class="issue-left"><svg width="13" height="13" viewBox="0 0 13 13" style="flex-shrink:0;margin-top:2px"><circle cx="6.5" cy="6.5" r="6.5" fill="#ef4444"/></svg><a href="https://perion.atlassian.net/browse/HSSP-3697" target="_blank" class="issue-key" onclick="event.stopPropagation()" onmouseenter="event.stopPropagation()">HSSP-3697</a></div><div class="issue-body"><div class="issue-summary">Fix: Spend Split on External DSP Deals Ignored Priority Weight</div><div class="issue-meta"><span class="badge-status badge-done">Done</span><span class="badge-low">Low</span></div></div></div>`,
+  quarterly: `<div class="issue-row" data-key="HSSP-4194" onmouseenter="showCard(event,'HSSP-4194')" onmouseleave="hideCard()" onclick="openIssueModal('HSSP-4194')"><div class="issue-left"><svg width="13" height="13" viewBox="0 0 13 13" style="flex-shrink:0;margin-top:2px"><rect width="13" height="13" rx="2" fill="#22c55e"/></svg><a href="https://perion.atlassian.net/browse/HSSP-4194" target="_blank" class="issue-key" onclick="event.stopPropagation()" onmouseenter="event.stopPropagation()">HSSP-4194</a></div><div class="issue-body"><div class="issue-summary">Curators Can Create &amp; Edit Marketplace Rules</div><div class="issue-meta"><span class="badge-status badge-done">Done</span></div></div></div><div class="issue-row" data-key="HSSP-4196" onmouseenter="showCard(event,'HSSP-4196')" onmouseleave="hideCard()" onclick="openIssueModal('HSSP-4196')"><div class="issue-left"><svg width="13" height="13" viewBox="0 0 13 13" style="flex-shrink:0;margin-top:2px"><rect width="13" height="13" rx="2" fill="#22c55e"/></svg><a href="https://perion.atlassian.net/browse/HSSP-4196" target="_blank" class="issue-key" onclick="event.stopPropagation()" onmouseenter="event.stopPropagation()">HSSP-4196</a></div><div class="issue-body"><div class="issue-summary">Curators Get a Marketplace Rules Dashboard</div><div class="issue-meta"><span class="badge-status badge-done">Done</span></div></div></div><div class="issue-row" data-key="HSSP-4195" onmouseenter="showCard(event,'HSSP-4195')" onmouseleave="hideCard()" onclick="openIssueModal('HSSP-4195')"><div class="issue-left"><svg width="13" height="13" viewBox="0 0 13 13" style="flex-shrink:0;margin-top:2px"><rect width="13" height="13" rx="2" fill="#22c55e"/></svg><a href="https://perion.atlassian.net/browse/HSSP-4195" target="_blank" class="issue-key" onclick="event.stopPropagation()" onmouseenter="event.stopPropagation()">HSSP-4195</a></div><div class="issue-body"><div class="issue-summary">Marketplace Rules Appear on Deal Targeting Map</div><div class="issue-meta"><span class="badge-status badge-done">Done</span></div></div></div><div class="issue-row" data-key="HSSP-4422" onmouseenter="showCard(event,'HSSP-4422')" onmouseleave="hideCard()" onclick="openIssueModal('HSSP-4422')"><div class="issue-left"><svg width="13" height="13" viewBox="0 0 13 13" style="flex-shrink:0;margin-top:2px"><rect width="13" height="13" rx="2" fill="#3b82f6"/></svg><a href="https://perion.atlassian.net/browse/HSSP-4422" target="_blank" class="issue-key" onclick="event.stopPropagation()" onmouseenter="event.stopPropagation()">HSSP-4422</a></div><div class="issue-body"><div class="issue-summary">Remove Appcelerate DSP Integration</div><div class="issue-meta"><span class="badge-status badge-done">Done</span></div></div></div><div class="issue-row" data-key="HSSP-4008" onmouseenter="showCard(event,'HSSP-4008')" onmouseleave="hideCard()" onclick="openIssueModal('HSSP-4008')"><div class="issue-left"><svg width="13" height="13" viewBox="0 0 13 13" style="flex-shrink:0;margin-top:2px"><rect width="13" height="13" rx="2" fill="#22c55e"/></svg><a href="https://perion.atlassian.net/browse/HSSP-4008" target="_blank" class="issue-key" onclick="event.stopPropagation()" onmouseenter="event.stopPropagation()">HSSP-4008</a></div><div class="issue-body"><div class="issue-summary">Deal API: Core Endpoints for Deal Creation</div><div class="issue-meta"><span class="badge-status badge-done">Done</span></div></div></div><div class="issue-row" data-key="HSSP-4235" onmouseenter="showCard(event,'HSSP-4235')" onmouseleave="hideCard()" onclick="openIssueModal('HSSP-4235')"><div class="issue-left"><svg width="13" height="13" viewBox="0 0 13 13" style="flex-shrink:0;margin-top:2px"><rect width="13" height="13" rx="2" fill="#22c55e"/></svg><a href="https://perion.atlassian.net/browse/HSSP-4235" target="_blank" class="issue-key" onclick="event.stopPropagation()" onmouseenter="event.stopPropagation()">HSSP-4235</a></div><div class="issue-body"><div class="issue-summary">Curators &amp; Buyers Can Now Target with Their Own Screen Packs</div><div class="issue-meta"><span class="badge-status badge-done">Done</span></div></div></div><div class="issue-row" data-key="HSSP-3974" onmouseenter="showCard(event,'HSSP-3974')" onmouseleave="hideCard()" onclick="openIssueModal('HSSP-3974')"><div class="issue-left"><svg width="13" height="13" viewBox="0 0 13 13" style="flex-shrink:0;margin-top:2px"><rect width="13" height="13" rx="2" fill="#22c55e"/></svg><a href="https://perion.atlassian.net/browse/HSSP-3974" target="_blank" class="issue-key" onclick="event.stopPropagation()" onmouseenter="event.stopPropagation()">HSSP-3974</a></div><div class="issue-body"><div class="issue-summary">Screen Page: See Deals &amp; Line Items Targeting a Unit</div><div class="issue-meta"><span class="badge-status badge-done">Done</span><span class="badge-high">High</span></div></div></div><div class="issue-row" data-key="HSSP-4272" onmouseenter="showCard(event,'HSSP-4272')" onmouseleave="hideCard()" onclick="openIssueModal('HSSP-4272')"><div class="issue-left"><svg width="13" height="13" viewBox="0 0 13 13" style="flex-shrink:0;margin-top:2px"><rect width="13" height="13" rx="2" fill="#22c55e"/></svg><a href="https://perion.atlassian.net/browse/HSSP-4272" target="_blank" class="issue-key" onclick="event.stopPropagation()" onmouseenter="event.stopPropagation()">HSSP-4272</a></div><div class="issue-body"><div class="issue-summary">Build Appcelerate DSP Integration</div><div class="issue-meta"><span class="badge-status badge-done">Done</span></div></div></div><div class="issue-row" data-key="HSSP-4425" onmouseenter="showCard(event,'HSSP-4425')" onmouseleave="hideCard()" onclick="openIssueModal('HSSP-4425')"><div class="issue-left"><svg width="13" height="13" viewBox="0 0 13 13" style="flex-shrink:0;margin-top:2px"><rect width="13" height="13" rx="2" fill="#3b82f6"/></svg><a href="https://perion.atlassian.net/browse/HSSP-4425" target="_blank" class="issue-key" onclick="event.stopPropagation()" onmouseenter="event.stopPropagation()">HSSP-4425</a></div><div class="issue-body"><div class="issue-summary">Pacing CD: Switch On the Pacing Curve Generator</div><div class="issue-meta"><span class="badge-status badge-done">Done</span></div></div></div><div class="issue-row" data-key="HSSP-4293" onmouseenter="showCard(event,'HSSP-4293')" onmouseleave="hideCard()" onclick="openIssueModal('HSSP-4293')"><div class="issue-left"><svg width="13" height="13" viewBox="0 0 13 13" style="flex-shrink:0;margin-top:2px"><rect width="13" height="13" rx="2" fill="#3b82f6"/></svg><a href="https://perion.atlassian.net/browse/HSSP-4293" target="_blank" class="issue-key" onclick="event.stopPropagation()" onmouseenter="event.stopPropagation()">HSSP-4293</a></div><div class="issue-body"><div class="issue-summary">Pacing CD: Nirvana Deal-Level Pacing Curves</div><div class="issue-meta"><span class="badge-status badge-done">Done</span></div></div></div><div class="issue-row" data-key="HSSP-4354" onmouseenter="showCard(event,'HSSP-4354')" onmouseleave="hideCard()" onclick="openIssueModal('HSSP-4354')"><div class="issue-left"><svg width="13" height="13" viewBox="0 0 13 13" style="flex-shrink:0;margin-top:2px"><rect width="13" height="13" rx="2" fill="#3b82f6"/></svg><a href="https://perion.atlassian.net/browse/HSSP-4354" target="_blank" class="issue-key" onclick="event.stopPropagation()" onmouseenter="event.stopPropagation()">HSSP-4354</a></div><div class="issue-body"><div class="issue-summary">Pacing CD: Add Pacing Fields to Package Model</div><div class="issue-meta"><span class="badge-status badge-done">Done</span></div></div></div><div class="issue-row" data-key="HSSP-4419" onmouseenter="showCard(event,'HSSP-4419')" onmouseleave="hideCard()" onclick="openIssueModal('HSSP-4419')"><div class="issue-left"><svg width="13" height="13" viewBox="0 0 13 13" style="flex-shrink:0;margin-top:2px"><rect width="13" height="13" rx="2" fill="#3b82f6"/></svg><a href="https://perion.atlassian.net/browse/HSSP-4419" target="_blank" class="issue-key" onclick="event.stopPropagation()" onmouseenter="event.stopPropagation()">HSSP-4419</a></div><div class="issue-body"><div class="issue-summary">Pacing CD: Block Audience Pacing on Paced Deals</div><div class="issue-meta"><span class="badge-status badge-done">Done</span></div></div></div><div class="issue-row" data-key="HSSP-4327" onmouseenter="showCard(event,'HSSP-4327')" onmouseleave="hideCard()" onclick="openIssueModal('HSSP-4327')"><div class="issue-left"><svg width="13" height="13" viewBox="0 0 13 13" style="flex-shrink:0;margin-top:2px"><rect width="13" height="13" rx="2" fill="#3b82f6"/></svg><a href="https://perion.atlassian.net/browse/HSSP-4327" target="_blank" class="issue-key" onclick="event.stopPropagation()" onmouseenter="event.stopPropagation()">HSSP-4327</a></div><div class="issue-body"><div class="issue-summary">Pacing CD: Deal Pacing Info in Campaigns API</div><div class="issue-meta"><span class="badge-status badge-done">Done</span></div></div></div><div class="issue-row" data-key="HSSP-4294" onmouseenter="showCard(event,'HSSP-4294')" onmouseleave="hideCard()" onclick="openIssueModal('HSSP-4294')"><div class="issue-left"><svg width="13" height="13" viewBox="0 0 13 13" style="flex-shrink:0;margin-top:2px"><rect width="13" height="13" rx="2" fill="#3b82f6"/></svg><a href="https://perion.atlassian.net/browse/HSSP-4294" target="_blank" class="issue-key" onclick="event.stopPropagation()" onmouseenter="event.stopPropagation()">HSSP-4294</a></div><div class="issue-body"><div class="issue-summary">Pacing CD: Trigger Pacing Curve Generation in Nirvana</div><div class="issue-meta"><span class="badge-status badge-done">Done</span></div></div></div><div class="issue-row" data-key="HSSP-4264" onmouseenter="showCard(event,'HSSP-4264')" onmouseleave="hideCard()" onclick="openIssueModal('HSSP-4264')"><div class="issue-left"><svg width="13" height="13" viewBox="0 0 13 13" style="flex-shrink:0;margin-top:2px"><rect width="13" height="13" rx="2" fill="#3b82f6"/></svg><a href="https://perion.atlassian.net/browse/HSSP-4264" target="_blank" class="issue-key" onclick="event.stopPropagation()" onmouseenter="event.stopPropagation()">HSSP-4264</a></div><div class="issue-body"><div class="issue-summary">Pacing CD: Package Pacing Curve Model &amp; Endpoints</div><div class="issue-meta"><span class="badge-status badge-done">Done</span></div></div></div><div class="issue-row" data-key="HSSP-4444" onmouseenter="showCard(event,'HSSP-4444')" onmouseleave="hideCard()" onclick="openIssueModal('HSSP-4444')"><div class="issue-left"><svg width="13" height="13" viewBox="0 0 13 13" style="flex-shrink:0;margin-top:2px"><rect width="13" height="13" rx="2" fill="#3b82f6"/></svg><a href="https://perion.atlassian.net/browse/HSSP-4444" target="_blank" class="issue-key" onclick="event.stopPropagation()" onmouseenter="event.stopPropagation()">HSSP-4444</a></div><div class="issue-body"><div class="issue-summary">TTD PG Deals: Raise Bid Rate to 95%</div><div class="issue-meta"><span class="badge-status badge-done">Done</span><span class="badge-high">High</span></div></div></div><div class="issue-row" data-key="HSSP-4446" onmouseenter="showCard(event,'HSSP-4446')" onmouseleave="hideCard()" onclick="openIssueModal('HSSP-4446')"><div class="issue-left"><svg width="13" height="13" viewBox="0 0 13 13" style="flex-shrink:0;margin-top:2px"><rect width="13" height="13" rx="2" fill="#3b82f6"/></svg><a href="https://perion.atlassian.net/browse/HSSP-4446" target="_blank" class="issue-key" onclick="event.stopPropagation()" onmouseenter="event.stopPropagation()">HSSP-4446</a></div><div class="issue-body"><div class="issue-summary">TTD PG Deals: Backfill Existing Deals to 95% Bid Rate</div><div class="issue-meta"><span class="badge-status badge-done">Done</span></div></div></div><div class="issue-row" data-key="HSSP-3793" onmouseenter="showCard(event,'HSSP-3793')" onmouseleave="hideCard()" onclick="openIssueModal('HSSP-3793')"><div class="issue-left"><svg width="13" height="13" viewBox="0 0 13 13" style="flex-shrink:0;margin-top:2px"><rect width="13" height="13" rx="2" fill="#22c55e"/></svg><a href="https://perion.atlassian.net/browse/HSSP-3793" target="_blank" class="issue-key" onclick="event.stopPropagation()" onmouseenter="event.stopPropagation()">HSSP-3793</a></div><div class="issue-body"><div class="issue-summary">Trade Desk: Sync Programmatic Guaranteed Deals</div><div class="issue-meta"><span class="badge-status badge-done">Done</span></div></div></div><div class="issue-row" data-key="HSSP-4084" onmouseenter="showCard(event,'HSSP-4084')" onmouseleave="hideCard()" onclick="openIssueModal('HSSP-4084')"><div class="issue-left"><svg width="13" height="13" viewBox="0 0 13 13" style="flex-shrink:0;margin-top:2px"><rect width="13" height="13" rx="2" fill="#22c55e"/></svg><a href="https://perion.atlassian.net/browse/HSSP-4084" target="_blank" class="issue-key" onclick="event.stopPropagation()" onmouseenter="event.stopPropagation()">HSSP-4084</a></div><div class="issue-body"><div class="issue-summary">DV360: Better Geo Targeting via Screen IP Address</div><div class="issue-meta"><span class="badge-status badge-done">Done</span></div></div></div><div class="issue-row" data-key="HSSP-4011" onmouseenter="showCard(event,'HSSP-4011')" onmouseleave="hideCard()" onclick="openIssueModal('HSSP-4011')"><div class="issue-left"><svg width="13" height="13" viewBox="0 0 13 13" style="flex-shrink:0;margin-top:2px"><rect width="13" height="13" rx="2" fill="#22c55e"/></svg><a href="https://perion.atlassian.net/browse/HSSP-4011" target="_blank" class="issue-key" onclick="event.stopPropagation()" onmouseenter="event.stopPropagation()">HSSP-4011</a></div><div class="issue-body"><div class="issue-summary">Deal API: Developer Documentation</div><div class="issue-meta"><span class="badge-status badge-done">Done</span></div></div></div><div class="issue-row" data-key="HSSP-4117" onmouseenter="showCard(event,'HSSP-4117')" onmouseleave="hideCard()" onclick="openIssueModal('HSSP-4117')"><div class="issue-left"><svg width="13" height="13" viewBox="0 0 13 13" style="flex-shrink:0;margin-top:2px"><rect width="13" height="13" rx="2" fill="#22c55e"/></svg><a href="https://perion.atlassian.net/browse/HSSP-4117" target="_blank" class="issue-key" onclick="event.stopPropagation()" onmouseenter="event.stopPropagation()">HSSP-4117</a></div><div class="issue-body"><div class="issue-summary">Screen Packs: Pre-selection Defaults &amp; Custom Pack IDs</div><div class="issue-meta"><span class="badge-status badge-done">Done</span></div></div></div><div class="issue-row" data-key="HSSP-4120" onmouseenter="showCard(event,'HSSP-4120')" onmouseleave="hideCard()" onclick="openIssueModal('HSSP-4120')"><div class="issue-left"><svg width="13" height="13" viewBox="0 0 13 13" style="flex-shrink:0;margin-top:2px"><rect width="13" height="13" rx="2" fill="#22c55e"/></svg><a href="https://perion.atlassian.net/browse/HSSP-4120" target="_blank" class="issue-key" onclick="event.stopPropagation()" onmouseenter="event.stopPropagation()">HSSP-4120</a></div><div class="issue-body"><div class="issue-summary">Buyers Can Create &amp; Manage Their Own Inventory Packs</div><div class="issue-meta"><span class="badge-status badge-done">Done</span></div></div></div><div class="issue-row" data-key="HSSP-4118" onmouseenter="showCard(event,'HSSP-4118')" onmouseleave="hideCard()" onclick="openIssueModal('HSSP-4118')"><div class="issue-left"><svg width="13" height="13" viewBox="0 0 13 13" style="flex-shrink:0;margin-top:2px"><rect width="13" height="13" rx="2" fill="#22c55e"/></svg><a href="https://perion.atlassian.net/browse/HSSP-4118" target="_blank" class="issue-key" onclick="event.stopPropagation()" onmouseenter="event.stopPropagation()">HSSP-4118</a></div><div class="issue-body"><div class="issue-summary">Curators Can Create &amp; Manage Their Own Inventory Packs</div><div class="issue-meta"><span class="badge-status badge-done">Done</span></div></div></div><div class="issue-row" data-key="HSSP-4197" onmouseenter="showCard(event,'HSSP-4197')" onmouseleave="hideCard()" onclick="openIssueModal('HSSP-4197')"><div class="issue-left"><svg width="13" height="13" viewBox="0 0 13 13" style="flex-shrink:0;margin-top:2px"><rect width="13" height="13" rx="2" fill="#22c55e"/></svg><a href="https://perion.atlassian.net/browse/HSSP-4197" target="_blank" class="issue-key" onclick="event.stopPropagation()" onmouseenter="event.stopPropagation()">HSSP-4197</a></div><div class="issue-body"><div class="issue-summary">Trade Desk Deal Sync: Monitoring &amp; Alerting</div><div class="issue-meta"><span class="badge-status badge-done">Done</span></div></div></div><div class="issue-row" data-key="HSSP-3961" onmouseenter="showCard(event,'HSSP-3961')" onmouseleave="hideCard()" onclick="openIssueModal('HSSP-3961')"><div class="issue-left"><svg width="13" height="13" viewBox="0 0 13 13" style="flex-shrink:0;margin-top:2px"><rect width="13" height="13" rx="2" fill="#22c55e"/></svg><a href="https://perion.atlassian.net/browse/HSSP-3961" target="_blank" class="issue-key" onclick="event.stopPropagation()" onmouseenter="event.stopPropagation()">HSSP-3961</a></div><div class="issue-body"><div class="issue-summary">Send Screen Location to DV360 via IP for Geo Targeting</div><div class="issue-meta"><span class="badge-status badge-done">Done</span></div></div></div><div class="issue-row" data-key="HSSP-2695" onmouseenter="showCard(event,'HSSP-2695')" onmouseleave="hideCard()" onclick="openIssueModal('HSSP-2695')"><div class="issue-left"><svg width="13" height="13" viewBox="0 0 13 13" style="flex-shrink:0;margin-top:2px"><rect width="13" height="13" rx="2" fill="#22c55e"/></svg><a href="https://perion.atlassian.net/browse/HSSP-2695" target="_blank" class="issue-key" onclick="event.stopPropagation()" onmouseenter="event.stopPropagation()">HSSP-2695</a></div><div class="issue-body"><div class="issue-summary">Markup Chart Added to Curated Deal Pages</div><div class="issue-meta"><span class="badge-status badge-done">Done</span></div></div></div><div class="issue-row" data-key="HSSP-1964" onmouseenter="showCard(event,'HSSP-1964')" onmouseleave="hideCard()" onclick="openIssueModal('HSSP-1964')"><div class="issue-left"><svg width="13" height="13" viewBox="0 0 13 13" style="flex-shrink:0;margin-top:2px"><rect width="13" height="13" rx="2" fill="#22c55e"/></svg><a href="https://perion.atlassian.net/browse/HSSP-1964" target="_blank" class="issue-key" onclick="event.stopPropagation()" onmouseenter="event.stopPropagation()">HSSP-1964</a></div><div class="issue-body"><div class="issue-summary">Support HTML Creatives from Programmatic Bids</div><div class="issue-meta"><span class="badge-status badge-done">Done</span></div></div></div><div class="issue-row" data-key="HSSP-1965" onmouseenter="showCard(event,'HSSP-1965')" onmouseleave="hideCard()" onclick="openIssueModal('HSSP-1965')"><div class="issue-left"><svg width="13" height="13" viewBox="0 0 13 13" style="flex-shrink:0;margin-top:2px"><rect width="13" height="13" rx="2" fill="#22c55e"/></svg><a href="https://perion.atlassian.net/browse/HSSP-1965" target="_blank" class="issue-key" onclick="event.stopPropagation()" onmouseenter="event.stopPropagation()">HSSP-1965</a></div><div class="issue-body"><div class="issue-summary">Support ZIP Creatives from Programmatic Bids</div><div class="issue-meta"><span class="badge-status badge-done">Done</span></div></div></div><div class="issue-row" data-key="HSSP-3697" onmouseenter="showCard(event,'HSSP-3697')" onmouseleave="hideCard()" onclick="openIssueModal('HSSP-3697')"><div class="issue-left"><svg width="13" height="13" viewBox="0 0 13 13" style="flex-shrink:0;margin-top:2px"><circle cx="6.5" cy="6.5" r="6.5" fill="#ef4444"/></svg><a href="https://perion.atlassian.net/browse/HSSP-3697" target="_blank" class="issue-key" onclick="event.stopPropagation()" onmouseenter="event.stopPropagation()">HSSP-3697</a></div><div class="issue-body"><div class="issue-summary">Fix: Spend Split on External DSP Deals Ignored Priority Weight</div><div class="issue-meta"><span class="badge-status badge-done">Done</span><span class="badge-low">Low</span></div></div></div><div class="issue-row" data-key="HSSP-4265" onmouseenter="showCard(event,'HSSP-4265')" onmouseleave="hideCard()" onclick="openIssueModal('HSSP-4265')"><div class="issue-left"><svg width="13" height="13" viewBox="0 0 13 13" style="flex-shrink:0;margin-top:2px"><circle cx="6.5" cy="6.5" r="6.5" fill="#ef4444"/></svg><a href="https://perion.atlassian.net/browse/HSSP-4265" target="_blank" class="issue-key" onclick="event.stopPropagation()" onmouseenter="event.stopPropagation()">HSSP-4265</a></div><div class="issue-body"><div class="issue-summary">Fix: Trade Desk Deal Sync Lambda Stopped Creating Deals</div><div class="issue-meta"><span class="badge-status badge-done">Done</span></div></div></div><div class="issue-row" data-key="HSSP-4221" onmouseenter="showCard(event,'HSSP-4221')" onmouseleave="hideCard()" onclick="openIssueModal('HSSP-4221')"><div class="issue-left"><svg width="13" height="13" viewBox="0 0 13 13" style="flex-shrink:0;margin-top:2px"><circle cx="6.5" cy="6.5" r="6.5" fill="#ef4444"/></svg><a href="https://perion.atlassian.net/browse/HSSP-4221" target="_blank" class="issue-key" onclick="event.stopPropagation()" onmouseenter="event.stopPropagation()">HSSP-4221</a></div><div class="issue-body"><div class="issue-summary">Fix: Trade Desk Deals Fail for Valid Buyer Accounts</div><div class="issue-meta"><span class="badge-status badge-done">Done</span></div></div></div><div class="issue-row" data-key="HSSP-4228" onmouseenter="showCard(event,'HSSP-4228')" onmouseleave="hideCard()" onclick="openIssueModal('HSSP-4228')"><div class="issue-left"><svg width="13" height="13" viewBox="0 0 13 13" style="flex-shrink:0;margin-top:2px"><circle cx="6.5" cy="6.5" r="6.5" fill="#ef4444"/></svg><a href="https://perion.atlassian.net/browse/HSSP-4228" target="_blank" class="issue-key" onclick="event.stopPropagation()" onmouseenter="event.stopPropagation()">HSSP-4228</a></div><div class="issue-body"><div class="issue-summary">Fix: Crash When Trade Desk Returns Empty Flight Data</div><div class="issue-meta"><span class="badge-status badge-done">Done</span></div></div></div><div class="issue-row" data-key="HSSP-4079" onmouseenter="showCard(event,'HSSP-4079')" onmouseleave="hideCard()" onclick="openIssueModal('HSSP-4079')"><div class="issue-left"><svg width="13" height="13" viewBox="0 0 13 13" style="flex-shrink:0;margin-top:2px"><circle cx="6.5" cy="6.5" r="6.5" fill="#ef4444"/></svg><a href="https://perion.atlassian.net/browse/HSSP-4079" target="_blank" class="issue-key" onclick="event.stopPropagation()" onmouseenter="event.stopPropagation()">HSSP-4079</a></div><div class="issue-body"><div class="issue-summary">Fix: Trade Desk Deal Sync Down in Japan</div><div class="issue-meta"><span class="badge-status badge-done">Done</span></div></div></div><div class="issue-row" data-key="HSSP-4182" onmouseenter="showCard(event,'HSSP-4182')" onmouseleave="hideCard()" onclick="openIssueModal('HSSP-4182')"><div class="issue-left"><svg width="13" height="13" viewBox="0 0 13 13" style="flex-shrink:0;margin-top:2px"><circle cx="6.5" cy="6.5" r="6.5" fill="#ef4444"/></svg><a href="https://perion.atlassian.net/browse/HSSP-4182" target="_blank" class="issue-key" onclick="event.stopPropagation()" onmouseenter="event.stopPropagation()">HSSP-4182</a></div><div class="issue-body"><div class="issue-summary">Fix: Duplicated PG Deals Showing as Canceled on Trade Desk</div><div class="issue-meta"><span class="badge-status badge-done">Done</span></div></div></div><div class="issue-row" data-key="HSSP-4437" onmouseenter="showCard(event,'HSSP-4437')" onmouseleave="hideCard()" onclick="openIssueModal('HSSP-4437')"><div class="issue-left"><svg width="13" height="13" viewBox="0 0 13 13" style="flex-shrink:0;margin-top:2px"><circle cx="6.5" cy="6.5" r="6.5" fill="#ef4444"/></svg><a href="https://perion.atlassian.net/browse/HSSP-4437" target="_blank" class="issue-key" onclick="event.stopPropagation()" onmouseenter="event.stopPropagation()">HSSP-4437</a></div><div class="issue-body"><div class="issue-summary">Fix: Budget Min/Max Missing from Curated Deal API</div><div class="issue-meta"><span class="badge-status badge-done">Done</span></div></div></div><div class="issue-row" data-key="HSSP-3917" onmouseenter="showCard(event,'HSSP-3917')" onmouseleave="hideCard()" onclick="openIssueModal('HSSP-3917')"><div class="issue-left"><svg width="13" height="13" viewBox="0 0 13 13" style="flex-shrink:0;margin-top:2px"><circle cx="6.5" cy="6.5" r="6.5" fill="#ef4444"/></svg><a href="https://perion.atlassian.net/browse/HSSP-3917" target="_blank" class="issue-key" onclick="event.stopPropagation()" onmouseenter="event.stopPropagation()">HSSP-3917</a></div><div class="issue-body"><div class="issue-summary">Fix: Buyers Can Now Filter Reports by Curated Deal</div><div class="issue-meta"><span class="badge-status badge-done">Done</span></div></div></div><div class="issue-row" data-key="HSSP-3491" onmouseenter="showCard(event,'HSSP-3491')" onmouseleave="hideCard()" onclick="openIssueModal('HSSP-3491')"><div class="issue-left"><svg width="13" height="13" viewBox="0 0 13 13" style="flex-shrink:0;margin-top:2px"><circle cx="6.5" cy="6.5" r="6.5" fill="#ef4444"/></svg><a href="https://perion.atlassian.net/browse/HSSP-3491" target="_blank" class="issue-key" onclick="event.stopPropagation()" onmouseenter="event.stopPropagation()">HSSP-3491</a></div><div class="issue-body"><div class="issue-summary">Fix: Creative Review Notification Emails Display Correctly</div><div class="issue-meta"><span class="badge-status badge-done">Done</span></div></div></div><div class="issue-row" data-key="HSSP-2252" onmouseenter="showCard(event,'HSSP-2252')" onmouseleave="hideCard()" onclick="openIssueModal('HSSP-2252')"><div class="issue-left"><svg width="13" height="13" viewBox="0 0 13 13" style="flex-shrink:0;margin-top:2px"><circle cx="6.5" cy="6.5" r="6.5" fill="#ef4444"/></svg><a href="https://perion.atlassian.net/browse/HSSP-2252" target="_blank" class="issue-key" onclick="event.stopPropagation()" onmouseenter="event.stopPropagation()">HSSP-2252</a></div><div class="issue-body"><div class="issue-summary">Fix: Curated Deal Pages No Longer Crash on Load</div><div class="issue-meta"><span class="badge-status badge-done">Done</span></div></div></div>`,
+};
+
+const STATS = {"weekly": {"stories": 8, "bugs": 1, "total": 9}, "biweekly": {"stories": 8, "bugs": 2, "total": 10}, "monthly": {"stories": 11, "bugs": 2, "total": 13}, "quarterly": {"stories": 28, "bugs": 10, "total": 38}};
+
+const RANGE_LABELS = {
+  weekly:    'May 5 – 14, 2026  (Last 10 Days)',
+  biweekly:  'Apr 30 – May 14, 2026  (Bi-weekly)',
+  monthly:   'Apr 14 – May 14, 2026  (Monthly)',
+  quarterly: 'Feb 13 – May 14, 2026  (Quarterly)',
+};
+
+const SHIPPED_TITLES = {
+  weekly:    {sub:'— Moved to Done (Last 10 Days)',   heading:'Shipped Last 10 Days'},
+  biweekly:  {sub:'— Moved to Done (2 Weeks)', heading:'Shipped Last 2 Weeks'},
+  monthly:   {sub:'— Moved to Done (30 Days)',  heading:'Shipped Last Month'},
+  quarterly: {sub:'— Moved to Done (90 Days)',heading:'Shipped Last Quarter'},
+};
+
+const SHIPPED_FILTER_URLS = {
+  weekly:    'https://perion.atlassian.net/issues?jql=project%20%3D%20HSSP%20AND%20status%20changed%20to%20Done%20during%20%28%22-10d%22%2C%20now%28%29%29%20AND%20issuetype%20not%20in%20%28%22Chore%22%2C%22Sub-task%22%2C%22Epic%22%2C%22Spike%22%29%20AND%20%22Epic%20Link%22%20not%20in%20%28HSSP-3096%2CHSSP-3606%2CHSSP-871%2CHSSP-3860%29%20ORDER%20BY%20updated%20DESC',
+  biweekly:  'https://perion.atlassian.net/issues?jql=project%20%3D%20HSSP%20AND%20status%20changed%20to%20Done%20during%20%28%22-14d%22%2C%20now%28%29%29%20AND%20issuetype%20not%20in%20%28%22Chore%22%2C%22Sub-task%22%2C%22Epic%22%2C%22Spike%22%29%20AND%20%22Epic%20Link%22%20not%20in%20%28HSSP-3096%2CHSSP-3606%2CHSSP-871%2CHSSP-3860%29%20ORDER%20BY%20updated%20DESC',
+  monthly:   'https://perion.atlassian.net/issues?jql=project%20%3D%20HSSP%20AND%20status%20changed%20to%20Done%20during%20%28%22-30d%22%2C%20now%28%29%29%20AND%20issuetype%20not%20in%20%28%22Chore%22%2C%22Sub-task%22%2C%22Epic%22%2C%22Spike%22%29%20AND%20%22Epic%20Link%22%20not%20in%20%28HSSP-3096%2CHSSP-3606%2CHSSP-871%2CHSSP-3860%29%20ORDER%20BY%20updated%20DESC',
+  quarterly: 'https://perion.atlassian.net/issues?jql=project%20%3D%20HSSP%20AND%20status%20changed%20to%20Done%20during%20%28%22-90d%22%2C%20now%28%29%29%20AND%20issuetype%20not%20in%20%28%22Chore%22%2C%22Sub-task%22%2C%22Epic%22%2C%22Spike%22%29%20AND%20%22Epic%20Link%22%20not%20in%20%28HSSP-3096%2CHSSP-3606%2CHSSP-871%2CHSSP-3860%29%20ORDER%20BY%20updated%20DESC',
+};
+
+const STORY_IC = '<svg width="13" height="13" viewBox="0 0 13 13"><rect width="13" height="13" rx="2" fill="#22c55e"/></svg>';
+const BUG_IC   = '<svg width="13" height="13" viewBox="0 0 13 13"><circle cx="6.5" cy="6.5" r="6.5" fill="#ef4444"/></svg>';
+const SPIKE_IC = '<svg width="13" height="13" viewBox="0 0 13 13"><rect width="13" height="13" rx="2" fill="#8b5cf6"/></svg>';
+
+const STATUS_CLS = {
+  'Done':'badge-done','In UAT':'badge-uat','In Staging':'badge-staging',
+  'In Review':'badge-review'
+};
+
+let cardTimeout;
+
+function showCard(e, key) {
+  clearTimeout(cardTimeout);
+  const d = ISSUES[key];
+  if (!d) return;
+  const card = document.getElementById('hover-card');
+  const ic = d.type === 'Bug' ? BUG_IC : (d.type === 'Spike' ? SPIKE_IC : STORY_IC);
+  document.getElementById('hc-icon').innerHTML = ic;
+  const keyEl = document.getElementById('hc-key');
+  keyEl.textContent = key; keyEl.href = d.url;
+  document.getElementById('hc-summary').textContent = d.summary;
+  const cls = STATUS_CLS[d.status] || 'badge-default';
+  document.getElementById('hc-status').innerHTML = `<span class="badge-status ${cls}">${d.status}</span>`;
+  const avWrap = document.getElementById('hc-avatar-wrap');
+  if (d.avatar) {
+    avWrap.innerHTML = `<img class="hc-avatar" src="${d.avatar}" alt="${d.assignee}" onerror="this.style.display='none'">`;
+  } else {
+    const initials = d.assignee !== 'Unassigned' ? d.assignee.split(' ').map(w=>w[0]).join('').slice(0,2) : '?';
+    avWrap.innerHTML = `<span class="hc-avatar-placeholder">${initials}</span>`;
+  }
+  document.getElementById('hc-assignee').textContent = d.assignee;
+  const desc = d.desc && d.desc !== 'No description provided.' ? d.desc.slice(0,200)+(d.desc.length>200?'…':'') : 'No description provided.';
+  document.getElementById('hc-desc').textContent = desc;
+  document.getElementById('hc-open').onclick = () => {
+    const a = document.createElement('a'); a.href=d.url; a.target='_blank';
+    document.body.appendChild(a); a.click(); a.remove();
+  };
+  document.getElementById('hc-copy').onclick = () => {
+    navigator.clipboard.writeText(d.url).catch(()=>{});
+    const btn = document.getElementById('hc-copy');
+    const orig = btn.innerHTML; btn.innerHTML = '✓ Copied';
+    setTimeout(()=>btn.innerHTML=orig, 1500);
+  };
+  const rect = e.currentTarget.getBoundingClientRect();
+  const vw = window.innerWidth, vh = window.innerHeight;
+  const cw = 320, ch = 260;
+  let left = rect.right + 8, top = rect.top;
+  if (left + cw > vw - 8) left = rect.left - cw - 8;
+  if (left < 8) left = 8;
+  if (top + ch > vh - 8) top = vh - ch - 8;
+  if (top < 8) top = 8;
+  card.style.left = left + 'px'; card.style.top = top + 'px';
+  card.classList.add('visible');
+}
+
+function hideCard() {
+  cardTimeout = setTimeout(() => document.getElementById('hover-card').classList.remove('visible'), 150);
+}
+
+document.getElementById('hover-card').addEventListener('mouseenter', () => clearTimeout(cardTimeout));
+document.getElementById('hover-card').addEventListener('mouseleave', hideCard);
+
+const JIRA_BASE = 'https://perion.atlassian.net/browse/';
+
+function closeDetailModal() {
+  document.getElementById('detail-overlay').classList.remove('open');
+  hideCard();
+}
+
+function _dmSetActions(url) {
+  document.getElementById('dm-open').onclick = () => window.open(url, '_blank');
+  document.getElementById('dm-copy').onclick = () => {
+    navigator.clipboard.writeText(url).catch(()=>{});
+    const btn = document.getElementById('dm-copy');
+    const orig = btn.innerHTML; btn.innerHTML = '✓ Copied';
+    setTimeout(()=>btn.innerHTML=orig, 1500);
+  };
+}
+
+function openIssueModal(key) {
+  const d = ISSUES[key];
+  if (!d) { window.open(JIRA_BASE + key, '_blank'); return; }
+  const url = d.url || JIRA_BASE + key;
+  hideCard();
+  const ic = d.type === 'Bug' ? BUG_IC : (d.type === 'Spike' ? SPIKE_IC : STORY_IC);
+  document.getElementById('dm-icon').innerHTML = ic;
+  const keyEl = document.getElementById('dm-key');
+  keyEl.textContent = key; keyEl.href = url;
+  const cls = STATUS_CLS[d.status] || 'badge-default';
+  let badges = `<span class="badge-status ${cls}">${d.status}</span>`;
+  if (d.priority && d.priority !== 'Normal') {
+    badges += d.priority === 'High'
+      ? '<span class="badge-high">High</span>'
+      : '<span class="badge-low">Low</span>';
+  }
+  document.getElementById('dm-badges').innerHTML = badges;
+  document.getElementById('dm-summary').textContent = d.summary;
+  const avHtml = d.avatar
+    ? `<img class="hc-avatar" src="${d.avatar}" alt="${d.assignee}" onerror="this.style.display='none'">`
+    : `<span class="hc-avatar-placeholder">${d.assignee.split(' ').map(w=>w[0]).join('').slice(0,2)}</span>`;
+  document.getElementById('dm-meta').innerHTML =
+    avHtml + `<span style="font-size:12px;color:#94a3b8">${d.assignee}</span>` +
+    `<span style="font-size:11px;color:#475569;margin-left:4px">· ${d.type}</span>`;
+  document.getElementById('dm-progress').innerHTML = '';
+  document.getElementById('dm-desc').textContent = d.desc || 'No description provided.';
+  _dmSetActions(url);
+  document.getElementById('detail-overlay').classList.add('open');
+}
+
+function openEpicModal(key) {
+  const d = EPICS[key];
+  if (!d) { window.open(JIRA_BASE + key, '_blank'); return; }
+  const url = d.url || JIRA_BASE + key;
+  hideCard();
+  document.getElementById('dm-icon').innerHTML = EPIC_IC;
+  const keyEl = document.getElementById('dm-key');
+  keyEl.textContent = key; keyEl.href = url;
+  document.getElementById('dm-badges').innerHTML =
+    `<span class="badge-status" style="background:#3b0764;color:#d8b4fe;text-transform:uppercase;font-size:10px;font-weight:600;padding:1px 6px;border-radius:3px">Epic</span>`;
+  document.getElementById('dm-summary').textContent = d.name;
+  document.getElementById('dm-meta').innerHTML =
+    d.start ? `<span style="font-size:12px;color:#64748b">${d.start} → ${d.end}</span>` : '';
+  const barFill = d.pct > 0
+    ? `<div style="display:flex;align-items:center;gap:10px;margin-bottom:6px">
+        <span style="font-size:22px;font-weight:800;color:${d.color}">${d.pct}%</span>
+        <span style="font-size:11px;color:#64748b">${d.frac}</span>
+       </div>
+       <div style="height:8px;background:#334155;border-radius:4px;overflow:hidden">
+         <div style="height:100%;width:${d.pct}%;background:${d.color};border-radius:4px"></div>
+       </div>`
+    : `<div style="font-size:12px;color:#64748b">Not started</div>`;
+  document.getElementById('dm-progress').innerHTML = barFill;
+  document.getElementById('dm-desc').textContent = d.desc || 'No description provided.';
+  _dmSetActions(url);
+  document.getElementById('detail-overlay').classList.add('open');
+}
+
+// Kept for backward compat (Gantt "Open in Jira" buttons, etc.)
+function openIssue(url) {
+  window.open(url, '_blank');
+}
+
+const EPIC_IC = '<svg width="13" height="13" viewBox="0 0 13 13" style="flex-shrink:0;margin-top:1px"><path d="M6.5 1L8.5 5H12L9 8l1 4-3.5-2L3 12l1-4-3-3h3.5z" fill="#a855f7"/></svg>';
+
+function showEpicCard(e, key) {
+  clearTimeout(cardTimeout);
+  const d = EPICS[key];
+  if (!d) return;
+  const card = document.getElementById('hover-card');
+  document.getElementById('hc-icon').innerHTML = EPIC_IC;
+  const keyEl = document.getElementById('hc-key');
+  keyEl.textContent = key; keyEl.href = d.url;
+  document.getElementById('hc-summary').textContent = d.name;
+  document.getElementById('hc-status').innerHTML = `<span class="badge-status" style="background:#3b0764;color:#d8b4fe;text-transform:uppercase;font-size:10px;font-weight:600;padding:1px 6px;border-radius:3px">Epic</span>`;
+  document.getElementById('hc-avatar-wrap').innerHTML = '';
+  document.getElementById('hc-assignee').textContent = '';
+  // Show progress bar in desc area
+  const barFill = `<div style="height:6px;background:#334155;border-radius:4px;overflow:hidden;margin:6px 0 2px"><div style="height:100%;width:${d.pct}%;background:${d.color};border-radius:4px"></div></div>`;
+  document.getElementById('hc-desc').innerHTML =
+    `<span style="font-size:18px;font-weight:800;color:${d.color}">${d.pct}%</span> complete &nbsp;<span style="font-size:10px;color:#64748b">${d.frac}</span>`
+    + barFill
+    + `<div style="font-size:10px;color:#64748b;margin-top:4px">${d.start} → ${d.end}</div>`
+    + `<div style="font-size:11px;color:#94a3b8;margin-top:8px;line-height:1.5">${d.desc}</div>`;
+  document.getElementById('hc-open').onclick = () => {
+    const a = document.createElement('a'); a.href=d.url; a.target='_blank';
+    document.body.appendChild(a); a.click(); a.remove();
+  };
+  document.getElementById('hc-copy').onclick = () => {
+    navigator.clipboard.writeText(d.url).catch(()=>{});
+    const btn = document.getElementById('hc-copy');
+    const orig = btn.innerHTML; btn.innerHTML = '✓ Copied';
+    setTimeout(()=>btn.innerHTML=orig, 1500);
+  };
+  const rect = e.currentTarget.getBoundingClientRect();
+  const vw = window.innerWidth, vh = window.innerHeight;
+  const cw = 320, ch = 300;
+  let left = rect.right + 8, top = rect.top;
+  if (left + cw > vw - 8) left = rect.left - cw - 8;
+  if (left < 8) left = 8;
+  if (top + ch > vh - 8) top = vh - ch - 8;
+  if (top < 8) top = 8;
+  card.style.left = left + 'px'; card.style.top = top + 'px';
+  card.classList.add('visible');
+}
+
+function animateCount(el, target) {
+  const start = parseInt(el.textContent) || 0;
+  if (start === target) return;
+  const dur = 300, steps = 12;
+  let step = 0;
+  const timer = setInterval(() => {
+    step++;
+    el.textContent = Math.round(start + (target - start) * step / steps);
+    if (step >= steps) { el.textContent = target; clearInterval(timer); }
+  }, dur / steps);
+}
+
+let currentGanttFilter = '';
+
+function setGanttFilter(btn, prefix) {
+  currentGanttFilter = prefix;
+  document.querySelectorAll('.gf-btn').forEach(b => b.classList.remove('gf-active'));
+  btn.classList.add('gf-active');
+  renderGantt();
+}
+
+function epicPrefix(name) {
+  if (name.startsWith('SSP'))         return 'SSP';
+  if (name.startsWith('Marketplace')) return 'Marketplace';
+  if (name.startsWith('Curate'))      return 'Curate';
+  return '';
+}
+
+function renderGantt() {
+  const svg = document.getElementById('gantt-svg');
+  const filter = currentGanttFilter;
+  const epicsArr = Object.entries(EPICS)
+    .filter(([,v]) => v.startRaw && v.endRaw)
+    .filter(([,v]) => !filter || epicPrefix(v.name) === filter)
+    .sort((a,b) => new Date(a[1].startRaw) - new Date(b[1].startRaw));
+  if (!epicsArr.length) return;
+
+  const today = new Date();
+  const allDates = epicsArr.flatMap(([,v]) => [new Date(v.startRaw), new Date(v.endRaw)]);
+  const minDate = new Date(Math.min(...allDates.map(d=>d.getTime())));
+  const maxDate = new Date(Math.max(...allDates.map(d=>d.getTime()), today.getTime()));
+  const totalMs  = maxDate - minDate || 1;
+
+  const LABEL_W = 260, CHART_W = 660, ROW_H = 34, HEADER_H = 32, PAD = 8;
+  const svgW = LABEL_W + CHART_W + PAD;
+  const svgH = HEADER_H + epicsArr.length * ROW_H + PAD;
+
+  let out = '';
+
+  // Zebra rows
+  epicsArr.forEach(([,], i) => {
+    if (i%2===0) out += `<rect x="0" y="${HEADER_H+i*ROW_H}" width="${svgW}" height="${ROW_H}" fill="rgba(255,255,255,.025)"/>`;
+  });
+
+  // Month gridlines + labels
+  const mo = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  let d = new Date(minDate.getFullYear(), minDate.getMonth(), 1);
+  while (d <= maxDate) {
+    const x = LABEL_W + ((d-minDate)/totalMs)*CHART_W;
+    out += `<line x1="${x}" y1="${HEADER_H}" x2="${x}" y2="${svgH}" stroke="rgba(255,255,255,.1)" stroke-width=".5"/>`;
+    out += `<text x="${x+3}" y="${HEADER_H-8}" font-size="10" fill="#666" font-family="inherit">${mo[d.getMonth()]}</text>`;
+    d = new Date(d.getFullYear(), d.getMonth()+1, 1);
+  }
+
+  // Today line
+  if (today >= minDate && today <= maxDate) {
+    const tx = LABEL_W + ((today-minDate)/totalMs)*CHART_W;
+    out += `<line x1="${tx}" y1="${HEADER_H}" x2="${tx}" y2="${svgH}" stroke="#f59e0b" stroke-width="1.5" stroke-dasharray="4,3"/>`;
+    out += `<text x="${tx+3}" y="${HEADER_H-8}" font-size="9" fill="#f59e0b" font-family="inherit">Today</text>`;
+  }
+
+  // Bars
+  epicsArr.forEach(([key, v], i) => {
+    const y   = HEADER_H + i*ROW_H;
+    const bY  = y + 8, bH = ROW_H - 14;
+    const s   = new Date(v.startRaw), e = new Date(v.endRaw);
+    const bX  = LABEL_W + ((s-minDate)/totalMs)*CHART_W;
+    const bFW = Math.max(((e-s)/totalMs)*CHART_W, 4);
+    const bDW = bFW*(v.pct/100);
+
+    const label = v.name.length>34 ? v.name.slice(0,32)+'…' : v.name;
+    out += `<text x="${LABEL_W-8}" y="${y+ROW_H/2+4}" font-size="11" fill="#ccc" text-anchor="end" font-family="inherit" style="cursor:pointer">${label}</text>`;
+    out += `<rect x="${bX}" y="${bY}" width="${bFW}" height="${bH}" rx="3" fill="rgba(255,255,255,.1)"/>`;
+    if (bDW>0) out += `<rect x="${bX}" y="${bY}" width="${bDW}" height="${bH}" rx="3" fill="${v.color}" opacity=".8"/>`;
+    if (bFW>38) out += `<text x="${bX+bFW/2}" y="${bY+bH/2+4}" font-size="10" fill="rgba(255,255,255,.9)" text-anchor="middle" font-family="inherit">${v.pct}%</text>`;
+    // Transparent full-row hit area — hover shows epic card, click opens detail modal
+    out += `<rect x="0" y="${y}" width="${svgW}" height="${ROW_H}" fill="transparent" style="cursor:pointer" onmouseenter="showGanttCard(event,'${key}',${LABEL_W})" onmouseleave="hideCard()" onclick="openEpicModal('${key}')"/>`;
+  });
+
+  if (!epicsArr.length) {
+    svg.setAttribute('viewBox','0 0 400 60');
+    svg.style.height = '60px';
+    svg.innerHTML = `<text x="200" y="36" font-size="13" fill="#555" text-anchor="middle" font-family="inherit">No epics match this filter</text>`;
+    return;
+  }
+  svg.setAttribute('viewBox', `0 0 ${svgW} ${svgH}`);
+  svg.style.height = svgH+'px';
+  svg.innerHTML = out;
+}
+
+// Anchor the epic hover card near the label text (left column), not the bar
+function showGanttCard(e, key, labelW) {
+  // Build a synthetic rect positioned at the left-label area of the hovered row
+  const svgEl = document.getElementById('gantt-svg');
+  const svgRect = svgEl.getBoundingClientRect();
+  const rowRect = e.currentTarget.getBoundingClientRect();
+  // Anchor to the right edge of the label column
+  const anchorRight = svgRect.left + (labelW / svgEl.viewBox.baseVal.width) * svgRect.width;
+  const synth = {
+    getBoundingClientRect: () => ({
+      left: svgRect.left, right: anchorRight,
+      top: rowRect.top,   bottom: rowRect.bottom,
+      width: anchorRight - svgRect.left, height: rowRect.height
+    })
+  };
+  showEpicCard({currentTarget: synth.getBoundingClientRect ? synth : e.currentTarget}, key);
+  // Use a more precise position — just to the right of the label column
+  const card = document.getElementById('hover-card');
+  const vw = window.innerWidth, vh = window.innerHeight;
+  const cw = 320, ch = 300;
+  let left = anchorRight + 10;
+  let top  = rowRect.top;
+  if (left + cw > vw - 8) left = anchorRight - cw - 10;
+  if (left < 8) left = 8;
+  if (top + ch > vh - 8) top = vh - ch - 8;
+  if (top < 8) top = 8;
+  card.style.left = left + 'px';
+  card.style.top  = top + 'px';
+  card.classList.add('visible');
+}
+
+let currentEpicFilter = '';
+
+function filterEpics(btn, prefix) {
+  currentEpicFilter = prefix;
+  document.querySelectorAll('.ef-btn').forEach(b => b.classList.remove('ef-active'));
+  btn.classList.add('ef-active');
+  let visible = 0;
+  document.querySelectorAll('.epic-item').forEach(item => {
+    const show = !prefix || item.dataset.prefix === prefix;
+    item.style.display = show ? '' : 'none';
+    if (show) visible++;
+  });
+  const countEl = document.getElementById('epic-count');
+  if (countEl) countEl.textContent = visible;
+  // Re-render Gantt if it's currently open
+  const ganttOverlay = document.getElementById('gantt-overlay');
+  if (ganttOverlay && ganttOverlay.classList.contains('open')) renderGantt();
+}
+
+function setRange(btn) {
+  document.querySelectorAll('.tr-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  const r = btn.dataset.range;
+  document.getElementById('shipped-heading').textContent = SHIPPED_TITLES[r].heading;
+  document.getElementById('shipped-sub').textContent     = SHIPPED_TITLES[r].sub;
+  document.getElementById('shipped-count').textContent   = STATS[r].total;
+  document.getElementById('shipped-wrap').innerHTML = SHIPPED_HTML[r];
+  const jiraLink = document.getElementById('shipped-jira-link');
+  if (jiraLink) { jiraLink.href = SHIPPED_FILTER_URLS[r]; }
+  const s = STATS[r];
+  animateCount(document.getElementById('stat-stories'), s.stories);
+  animateCount(document.getElementById('stat-bugs'),    s.bugs);
+}
+</script>
+</body>
+</html>
